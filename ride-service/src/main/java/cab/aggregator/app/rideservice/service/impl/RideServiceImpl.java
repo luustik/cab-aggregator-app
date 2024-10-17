@@ -1,5 +1,7 @@
 package cab.aggregator.app.rideservice.service.impl;
 
+import cab.aggregator.app.rideservice.client.DriverClient;
+import cab.aggregator.app.rideservice.client.PassengerClient;
 import cab.aggregator.app.rideservice.dto.request.RideRequest;
 import cab.aggregator.app.rideservice.dto.response.RideContainerResponse;
 import cab.aggregator.app.rideservice.dto.response.RideResponse;
@@ -33,6 +35,8 @@ public class RideServiceImpl implements RideService {
     private final RideContainerMapper rideContainerMapper;
     private final CalculationCost calculationCost;
     private final ValidationStatusService validationStatusService;
+    private final PassengerClient passengerClient;
+    private final DriverClient driverClient;
 
     @Override
     @Transactional(readOnly = true)
@@ -52,6 +56,7 @@ public class RideServiceImpl implements RideService {
     @Override
     @Transactional(readOnly = true)
     public RideContainerResponse getAllRidesByDriverId(Long driverId, int offset, int limit) {
+        checkIfExistDriver(driverId);
         return rideContainerMapper
                 .toContainer(rideRepository
                         .findAllByDriverId(driverId, PageRequest.of(offset, limit))
@@ -70,6 +75,7 @@ public class RideServiceImpl implements RideService {
     @Override
     @Transactional(readOnly = true)
     public RideContainerResponse getAllRidesByPassengerId(Long passengerId, int offset, int limit) {
+        checkIfExistPassenger(passengerId);
         return rideContainerMapper
                 .toContainer(rideRepository
                         .findAllByPassengerId(passengerId, PageRequest.of(offset, limit))
@@ -108,6 +114,8 @@ public class RideServiceImpl implements RideService {
     @Transactional
     public RideResponse createRide(RideRequest rideRequest) {
         Ride ride = rideMapper.toEntity(rideRequest);
+        checkIfExistDriver(ride.getDriverId());
+        checkIfExistPassenger(ride.getPassengerId());
         ride.setOrderDateTime(LocalDateTime.now());
         ride.setCost(calculationCost.generatePrice());
         ride.setStatus(Status.CREATED);
@@ -119,6 +127,8 @@ public class RideServiceImpl implements RideService {
     @Transactional
     public RideResponse updateRide(Long id, RideRequest rideRequest) {
         Ride ride = findById(id);
+        checkIfExistDriver(rideRequest.driverId());
+        checkIfExistPassenger(rideRequest.passengerId());
         rideMapper.updateRideFromDto(rideRequest, ride);
         rideRepository.save(ride);
         return rideMapper.toDto(ride);
@@ -129,5 +139,13 @@ public class RideServiceImpl implements RideService {
                 .findById(rideId)
                 .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage(ENTITY_WITH_ID_NOT_FOUND_MESSAGE,
                         new Object[]{RIDE, rideId}, Locale.getDefault())));
+    }
+
+    private void checkIfExistPassenger(Long passengerId){
+        passengerClient.getPassengerById(passengerId.intValue());
+    }
+
+    private void checkIfExistDriver(Long driverId){
+        driverClient.getDriverById(driverId.intValue());
     }
 }

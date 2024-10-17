@@ -1,5 +1,8 @@
 package cab.aggregator.app.ratingservice.service.impl;
 
+import cab.aggregator.app.ratingservice.client.DriverClient;
+import cab.aggregator.app.ratingservice.client.PassengerClient;
+import cab.aggregator.app.ratingservice.client.RideClient;
 import cab.aggregator.app.ratingservice.dto.request.RatingRequest;
 import cab.aggregator.app.ratingservice.dto.request.RatingUpdateDto;
 import cab.aggregator.app.ratingservice.dto.response.RatingContainerResponse;
@@ -13,6 +16,7 @@ import cab.aggregator.app.ratingservice.mapper.RatingMapper;
 import cab.aggregator.app.ratingservice.repository.RatingRepository;
 import cab.aggregator.app.ratingservice.service.RatingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +37,9 @@ public class RatingServiceImpl implements RatingService {
     private final MessageSource messageSource;
     private final RatingMapper ratingMapper;
     private final RatingContainerMapper ratingContainerMapper;
+    private final DriverClient driverClient;
+    private final PassengerClient passengerClient;
+    private final RideClient rideClient;
 
     @Override
     @Transactional(readOnly = true)
@@ -44,6 +51,7 @@ public class RatingServiceImpl implements RatingService {
     @Override
     @Transactional(readOnly = true)
     public RatingResponse getRatingByRideIdAndRole(Long rideId, String role) {
+        checkIfExistRide(rideId);
         return ratingMapper
                 .toDto(findRatingByRideIdAndRole(rideId, role));
     }
@@ -60,6 +68,7 @@ public class RatingServiceImpl implements RatingService {
     @Override
     @Transactional(readOnly = true)
     public RatingContainerResponse getAllByUserIdAndRole(Long userId, String role, int offset, int limit) {
+        checkIfExistUser(userId, UserRole.valueOf(role.toUpperCase()));
         return ratingContainerMapper
                 .toContainer(ratingRepository
                         .findAllByUserIdAndUserRole(userId, UserRole.valueOf(role.toUpperCase())
@@ -86,6 +95,8 @@ public class RatingServiceImpl implements RatingService {
     @Transactional
     public RatingResponse createRating(RatingRequest ratingRequest) {
         Rating rating = ratingMapper.toEntity(ratingRequest);
+        checkIfExistUser(rating.getUserId(),rating.getUserRole());
+        checkIfExistRide(rating.getRideId());
         checkIfExistRatingByRideIdAndRole(rating.getRideId(), rating.getUserRole());
         ratingRepository.save(rating);
         return ratingMapper.toDto(rating);
@@ -118,5 +129,24 @@ public class RatingServiceImpl implements RatingService {
         return ratingRepository.findByRideIdAndUserRole(rideId, UserRole.valueOf(role.toUpperCase()))
                 .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage(ENTITY_RESOURCE_NOT_FOUND_MESSAGE,
                         new Object[]{role, RATING, RIDE, rideId}, LocaleContextHolder.getLocale())));
+    }
+
+    private void checkIfExistUser(Long userId, UserRole role) {
+        switch (role){
+            case DRIVER -> checkIfExistDriver(userId);
+            case PASSENGER -> checkIfExistPassenger(userId);
+        }
+    }
+
+    private void checkIfExistRide(Long rideId){
+        rideClient.getRideById(rideId);
+    }
+
+    private void checkIfExistPassenger(Long passengerId){
+        passengerClient.getPassengerById(passengerId.intValue());
+    }
+
+    private void checkIfExistDriver(Long driverId){
+        driverClient.getDriverById(driverId.intValue());
     }
 }

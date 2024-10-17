@@ -2,6 +2,7 @@ package cab.aggregator.app.rideservice.exception.handler;
 
 import cab.aggregator.app.rideservice.dto.exception.ExceptionDto;
 import cab.aggregator.app.rideservice.dto.exception.MultiException;
+import cab.aggregator.app.rideservice.exception.CustomFeignException;
 import cab.aggregator.app.rideservice.exception.EntityNotFoundException;
 import cab.aggregator.app.rideservice.exception.ImpossibleStatusException;
 import jakarta.validation.ConstraintViolationException;
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
 
     private final MessageSource messageSource;
 
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler({EntityNotFoundException.class,CustomFeignException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ExceptionDto handleEntityNotFound(RuntimeException e) {
         return ExceptionDto.builder()

@@ -2,6 +2,7 @@ package cab.aggregator.app.ratingservice.exception.handler;
 
 import cab.aggregator.app.ratingservice.dto.exception.ExceptionDto;
 import cab.aggregator.app.ratingservice.dto.exception.MultiException;
+import cab.aggregator.app.ratingservice.exception.CustomFeignException;
 import cab.aggregator.app.ratingservice.exception.EntityNotFoundException;
 import cab.aggregator.app.ratingservice.exception.ResourceAlreadyExistException;
 import jakarta.validation.ConstraintViolationException;
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
 
     private final MessageSource messageSource;
 
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler({EntityNotFoundException.class, CustomFeignException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ExceptionDto handleEntityNotFound(RuntimeException e) {
         return ExceptionDto.builder()
@@ -84,6 +85,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ExceptionDto handleException(Exception e) {
+        e.printStackTrace();
         return ExceptionDto.builder()
                 .message(messageSource.getMessage(DEFAULT_EXCEPTION_MESSAGE, null, LocaleContextHolder.getLocale()))
                 .build();

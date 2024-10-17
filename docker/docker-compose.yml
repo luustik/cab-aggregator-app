@@ -1,17 +1,57 @@
 version: '3.1'
 
 volumes:
-  pg_taxi:
+  pg_passenger:
+  pg_driver:
+  pg_rating:
+  pg_ride:
 
 services:
-  taxi_db:
+
+  passenger_db:
     image: postgres:15.1-alpine
-    container_name: postgres
+    container_name: passenger
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=pass
-      - POSTGRES_DB=taxi_db
+      - POSTGRES_DB=passenger_db
     volumes:
-      - pg_taxi:/var/lib/postgresql/data
+      - pg_passenger:/var/lib/postgresql/data
+    ports:
+      - "5431:5432"
+
+  driver_db:
+    image: postgres:15.1-alpine
+    container_name: driver
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=driver_db
+    volumes:
+      - pg_driver:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
+  ride_db:
+    image: postgres:15.1-alpine
+    container_name: ride
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=ride_db
+    volumes:
+      - pg_ride:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  rating_db:
+    image: postgres:15.1-alpine
+    container_name: rating
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=rating_db
+    volumes:
+      - pg_rating:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
