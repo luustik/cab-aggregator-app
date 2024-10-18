@@ -1,13 +1,16 @@
 package cab.aggregator.app.rideservice.exception.handler;
 
+import cab.aggregator.app.rideservice.dto.client.ClientException;
 import cab.aggregator.app.rideservice.dto.exception.ExceptionDto;
 import cab.aggregator.app.rideservice.dto.exception.MultiException;
+import cab.aggregator.app.rideservice.exception.ExternalClientException;
 import cab.aggregator.app.rideservice.exception.EntityNotFoundException;
 import cab.aggregator.app.rideservice.exception.ImpossibleStatusException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -41,6 +44,13 @@ public class GlobalExceptionHandler {
         return ExceptionDto.builder()
                 .message(e.getMessage())
                 .build();
+    }
+
+    @ExceptionHandler(ExternalClientException.class)
+    public ResponseEntity<ClientException> handleExternalClient(ExternalClientException e) {
+        ClientException clientException = e.getClientException();
+        return ResponseEntity.status(clientException.status())
+                .body(clientException);
     }
 
     @ExceptionHandler(IllegalStateException.class)

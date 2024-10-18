@@ -33,6 +33,7 @@ public class RideServiceImpl implements RideService {
     private final RideContainerMapper rideContainerMapper;
     private final CalculationCost calculationCost;
     private final ValidationStatusService validationStatusService;
+    private final ValidatorClientService validatorClientService;
 
     @Override
     @Transactional(readOnly = true)
@@ -52,6 +53,7 @@ public class RideServiceImpl implements RideService {
     @Override
     @Transactional(readOnly = true)
     public RideContainerResponse getAllRidesByDriverId(Long driverId, int offset, int limit) {
+        validatorClientService.checkIfExistDriver(driverId);
         return rideContainerMapper
                 .toContainer(rideRepository
                         .findAllByDriverId(driverId, PageRequest.of(offset, limit))
@@ -70,6 +72,7 @@ public class RideServiceImpl implements RideService {
     @Override
     @Transactional(readOnly = true)
     public RideContainerResponse getAllRidesByPassengerId(Long passengerId, int offset, int limit) {
+        validatorClientService.checkIfExistPassenger(passengerId);
         return rideContainerMapper
                 .toContainer(rideRepository
                         .findAllByPassengerId(passengerId, PageRequest.of(offset, limit))
@@ -108,6 +111,8 @@ public class RideServiceImpl implements RideService {
     @Transactional
     public RideResponse createRide(RideRequest rideRequest) {
         Ride ride = rideMapper.toEntity(rideRequest);
+        validatorClientService.checkIfExistDriver(ride.getDriverId());
+        validatorClientService.checkIfExistPassenger(ride.getPassengerId());
         ride.setOrderDateTime(LocalDateTime.now());
         ride.setCost(calculationCost.generatePrice());
         ride.setStatus(Status.CREATED);
@@ -119,6 +124,8 @@ public class RideServiceImpl implements RideService {
     @Transactional
     public RideResponse updateRide(Long id, RideRequest rideRequest) {
         Ride ride = findById(id);
+        validatorClientService.checkIfExistDriver(rideRequest.driverId());
+        validatorClientService.checkIfExistPassenger(rideRequest.passengerId());
         rideMapper.updateRideFromDto(rideRequest, ride);
         rideRepository.save(ride);
         return rideMapper.toDto(ride);

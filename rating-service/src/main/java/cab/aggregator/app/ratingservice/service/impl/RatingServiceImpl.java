@@ -33,6 +33,7 @@ public class RatingServiceImpl implements RatingService {
     private final MessageSource messageSource;
     private final RatingMapper ratingMapper;
     private final RatingContainerMapper ratingContainerMapper;
+    private final ValidatorClientService validatorClientService;
 
     @Override
     @Transactional(readOnly = true)
@@ -44,6 +45,7 @@ public class RatingServiceImpl implements RatingService {
     @Override
     @Transactional(readOnly = true)
     public RatingResponse getRatingByRideIdAndRole(Long rideId, String role) {
+        validatorClientService.checkIfExistRide(rideId);
         return ratingMapper
                 .toDto(findRatingByRideIdAndRole(rideId, role));
     }
@@ -60,6 +62,7 @@ public class RatingServiceImpl implements RatingService {
     @Override
     @Transactional(readOnly = true)
     public RatingContainerResponse getAllByUserIdAndRole(Long userId, String role, int offset, int limit) {
+        validatorClientService.checkIfExistUser(userId, UserRole.valueOf(role.toUpperCase()));
         return ratingContainerMapper
                 .toContainer(ratingRepository
                         .findAllByUserIdAndUserRole(userId, UserRole.valueOf(role.toUpperCase())
@@ -86,6 +89,8 @@ public class RatingServiceImpl implements RatingService {
     @Transactional
     public RatingResponse createRating(RatingRequest ratingRequest) {
         Rating rating = ratingMapper.toEntity(ratingRequest);
+        validatorClientService.checkIfExistUser(rating.getUserId(),rating.getUserRole());
+        validatorClientService.checkIfExistRide(rating.getRideId());
         checkIfExistRatingByRideIdAndRole(rating.getRideId(), rating.getUserRole());
         ratingRepository.save(rating);
         return ratingMapper.toDto(rating);
@@ -119,4 +124,5 @@ public class RatingServiceImpl implements RatingService {
                 .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage(ENTITY_RESOURCE_NOT_FOUND_MESSAGE,
                         new Object[]{role, RATING, RIDE, rideId}, LocaleContextHolder.getLocale())));
     }
+
 }
