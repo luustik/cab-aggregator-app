@@ -83,7 +83,7 @@ public class DriverController implements DriverAPI {
 
     @Override
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('create-users')")
     public ResponseEntity<DriverResponse> createDriver(@Valid @Validated(OnCreate.class)
                                                        @RequestBody DriverRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)

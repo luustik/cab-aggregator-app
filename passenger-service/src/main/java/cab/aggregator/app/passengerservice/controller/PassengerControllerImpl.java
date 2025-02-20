@@ -94,7 +94,7 @@ public class PassengerControllerImpl implements PassengerAPI {
 
     @Override
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('create-users')")
     public ResponseEntity<PassengerResponse> createDriver(@Valid @Validated(OnCreate.class)
                                                           @RequestBody PassengerRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)

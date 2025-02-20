@@ -11,20 +11,12 @@ public class KeycloakProperties {
 
     private String realm;
     private UserManagement userManagement;
-    private Auth auth;
 
     @Data
     public static class UserManagement {
         private String clientId;
         private String clientSecret;
-        private String username;
-        private String password;
         private String serverUrl;
-    }
-
-    @Data
-    public static class Auth {
-        private String clientId;
     }
 
 }

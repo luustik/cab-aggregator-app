@@ -51,6 +51,7 @@ import java.util.Optional;
 
 import static cab.aggregator.app.authservice.util.Constants.AUTH_TOKEN;
 import static cab.aggregator.app.authservice.util.Constants.CLIENT_ID_FIELD;
+import static cab.aggregator.app.authservice.util.Constants.CLIENT_SECRET_FIELD;
 import static cab.aggregator.app.authservice.util.Constants.DRIVER_ROLE;
 import static cab.aggregator.app.authservice.util.Constants.GENDER_FIELD;
 import static cab.aggregator.app.authservice.util.Constants.GRANT_TYPE_FIELD;
@@ -60,7 +61,6 @@ import static cab.aggregator.app.authservice.util.Constants.PASSWORD_FIELD;
 import static cab.aggregator.app.authservice.util.Constants.REFRESH_TOKEN_FIELD;
 import static cab.aggregator.app.authservice.util.Constants.SERVICE_UNAVAILABLE_MESSAGE;
 import static cab.aggregator.app.authservice.util.Constants.USERNAME_FIELD;
-import static cab.aggregator.app.authservice.util.Constants.USER_CLIENT_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -117,7 +117,8 @@ public class UserServiceImpl implements UserService {
         body.add(GRANT_TYPE_FIELD, GRANT_TYPE_PASSWORD_FIELD);
         body.add(USERNAME_FIELD, signInDto.email());
         body.add(PASSWORD_FIELD, signInDto.password());
-        body.add(CLIENT_ID_FIELD, keycloakProperties.getAuth().getClientId());
+        body.add(CLIENT_ID_FIELD, keycloakProperties.getUserManagement().getClientId());
+        body.add(CLIENT_SECRET_FIELD, keycloakProperties.getUserManagement().getClientSecret());
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
 
@@ -137,7 +138,8 @@ public class UserServiceImpl implements UserService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add(GRANT_TYPE_FIELD, REFRESH_TOKEN_FIELD);
-        body.add(CLIENT_ID_FIELD, USER_CLIENT_ID);
+        body.add(CLIENT_ID_FIELD, keycloakProperties.getUserManagement().getClientId());
+        body.add(CLIENT_SECRET_FIELD, keycloakProperties.getUserManagement().getClientSecret());
         body.add(REFRESH_TOKEN_FIELD, refreshTokenDto.refreshToken());
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);

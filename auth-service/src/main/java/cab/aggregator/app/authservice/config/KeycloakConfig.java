@@ -22,8 +22,6 @@ public class KeycloakConfig {
                 .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
                 .clientId(keycloakProperties.getUserManagement().getClientId())
                 .clientSecret(keycloakProperties.getUserManagement().getClientSecret())
-                .username(keycloakProperties.getUserManagement().getUsername())
-                .password(keycloakProperties.getUserManagement().getPassword())
                 .build();
     }
 
