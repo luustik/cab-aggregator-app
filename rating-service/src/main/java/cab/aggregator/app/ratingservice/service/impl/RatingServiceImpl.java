@@ -144,7 +144,25 @@ public class RatingServiceImpl implements RatingService {
         DriverResponse driverResponse = validator.getDriverResponse(rideResponse.driverId(), "Bearer " + token.getToken().getTokenValue());
         PassengerResponse passengerResponse = validator.getPassengerResponse(rideResponse.passengerId(), "Bearer " + token.getToken().getTokenValue());
 
-        if (!(driverResponse.email().equals(userEmail)||passengerResponse.email().equals(userEmail))) {
+        String email = switch (rating.getUserRole()) {
+            case PASSENGER ->
+                    validator.getPassengerResponse(
+                            rating.getUserId(),
+                            "Bearer " + token.getToken().getTokenValue()
+                    ).email();
+            case DRIVER ->
+                    validator.getDriverResponse(
+                            rating.getUserId(),
+                            "Bearer " + token.getToken().getTokenValue()
+                    ).email();
+        };
+
+        boolean isEmailValid = email.equals(userEmail);
+
+        boolean isUserPartOfRide = userEmail.equals(driverResponse.email())
+                || userEmail.equals(passengerResponse.email());
+
+        if (!isEmailValid || !isUserPartOfRide) {
             throw new AccessDeniedException(
                     messageSource.getMessage(ACCESS_DENIED_MESSAGE,
                             new Object[]{}, LocaleContextHolder.getLocale())
