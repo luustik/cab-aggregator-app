@@ -12,6 +12,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 
 import static cab.aggregator.app.rideservice.utility.Constants.REGEXP_DATE_TIME;
@@ -55,12 +56,12 @@ public interface RideController {
     void deleteRideById(Long id);
 
     @Operation(summary = "Create new ride")
-    ResponseEntity<RideResponse> createRide(@Valid @Validated(OnCreate.class) RideRequest request);
+    ResponseEntity<RideResponse> createRide(@Valid @Validated(OnCreate.class) RideRequest request, JwtAuthenticationToken token);
 
     @Operation(summary = "Update ride by id")
     RideResponse updateRide(Long id, @Valid @Validated(OnUpdate.class) RideRequest request);
 
     @Operation(summary = "Update ride status by id")
     RideResponse updateRideStatus(Long id, @Valid @Validated(OnUpdate.class)
-    @Pattern(regexp = REGEXP_STATUS, message = "{status.pattern}") String status);
+    @Pattern(regexp = REGEXP_STATUS, message = "{status.pattern}") String status, JwtAuthenticationToken token);
 }

@@ -22,6 +22,7 @@ public final class Constants {
     public static final String REALM_ACCESS_CLAIM =  "realm_access";
     public static final String REALM_ACCESS_CLAIM_VALUE = "roles";
     public static final String ROLE_PREFIX = "ROLE_";
+    public static final String EMAIL_CLAIM = "email";
 
     public static final String ACTUATOR_ENDPOINT = "/actuator/**";
     public static final String SWAGGER_UI_ENDPOINT = "/swagger-ui/**";

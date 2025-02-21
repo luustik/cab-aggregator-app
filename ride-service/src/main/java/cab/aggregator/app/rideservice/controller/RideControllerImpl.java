@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -104,10 +105,11 @@ public class RideControllerImpl implements RideController {
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'PASSENGER')")
     public ResponseEntity<RideResponse> createRide(@Valid @Validated(OnCreate.class)
-                                                   @RequestBody RideRequest request) {
+                                                   @RequestBody RideRequest request,
+                                                   JwtAuthenticationToken token) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(rideService
-                        .createRide(request));
+                        .createRide(request, token));
     }
 
     @Override
@@ -125,7 +127,8 @@ public class RideControllerImpl implements RideController {
                                          @Valid @Validated(OnUpdate.class)
                                          @Pattern(regexp = REGEXP_STATUS, message = "{status.pattern}")
                                          @RequestBody
-                                         String status) {
-        return rideService.updateRideStatus(id, status);
+                                         String status,
+                                         JwtAuthenticationToken token) {
+        return rideService.updateRideStatus(id, status, token);
     }
 }

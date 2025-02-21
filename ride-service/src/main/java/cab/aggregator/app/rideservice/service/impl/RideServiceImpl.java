@@ -1,10 +1,13 @@
 package cab.aggregator.app.rideservice.service.impl;
 
+import cab.aggregator.app.rideservice.dto.client.DriverResponse;
+import cab.aggregator.app.rideservice.dto.client.PassengerResponse;
 import cab.aggregator.app.rideservice.dto.request.RideRequest;
 import cab.aggregator.app.rideservice.dto.response.RideContainerResponse;
 import cab.aggregator.app.rideservice.dto.response.RideResponse;
 import cab.aggregator.app.rideservice.entity.Ride;
 import cab.aggregator.app.rideservice.entity.enums.Status;
+import cab.aggregator.app.rideservice.exception.AccessDeniedException;
 import cab.aggregator.app.rideservice.exception.EntityNotFoundException;
 import cab.aggregator.app.rideservice.mapper.RideContainerMapper;
 import cab.aggregator.app.rideservice.mapper.RideMapper;
@@ -13,6 +16,7 @@ import cab.aggregator.app.rideservice.service.RideService;
 import cab.aggregator.app.rideservice.utility.Utilities;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
-import static cab.aggregator.app.rideservice.utility.Constants.ENTITY_WITH_ID_NOT_FOUND_MESSAGE;
+import static cab.aggregator.app.rideservice.utility.Constants.*;
 import static cab.aggregator.app.rideservice.utility.ResourceName.RIDE;
 
 @Service
@@ -101,8 +105,9 @@ public class RideServiceImpl implements RideService {
 
     @Override
     @Transactional
-    public RideResponse updateRideStatus(Long id, String status) {
+    public RideResponse updateRideStatus(Long id, String status, JwtAuthenticationToken token) {
         Ride ride = findById(id);
+        validateAccessOrThrow(ride, token);
         Status newStatus = validationStatusService.validateStatus(ride.getStatus(),
                 Status.valueOf(status.toUpperCase()));
         ride.setStatus(newStatus);
@@ -112,15 +117,35 @@ public class RideServiceImpl implements RideService {
 
     @Override
     @Transactional
-    public RideResponse createRide(RideRequest rideRequest) {
+    public RideResponse createRide(RideRequest rideRequest, JwtAuthenticationToken token) {
         Ride ride = rideMapper.toEntity(rideRequest);
         validator.checkIfExistDriver(ride.getDriverId(), getAuthToken());
         validator.checkIfExistPassenger(ride.getPassengerId(), getAuthToken());
+        validateAccessOrThrow(ride, token);
         ride.setOrderDateTime(LocalDateTime.now());
         ride.setCost(calculationCost.generatePrice());
         ride.setStatus(Status.CREATED);
         rideRepository.save(ride);
         return rideMapper.toDto(ride);
+    }
+
+    private void validateAccessOrThrow(Ride ride, JwtAuthenticationToken token) {
+        if (token.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals(ROLE_ADMIN))) {
+            return;
+        }
+
+        String userEmail = token.getToken().getClaims().get(EMAIL_CLAIM).toString();
+
+        DriverResponse driverResponse = validator.getDriverResponse(ride.getDriverId(), "Bearer " + token.getToken().getTokenValue());
+        PassengerResponse passengerResponse = validator.getPassengerResponse(ride.getPassengerId(), "Bearer " + token.getToken().getTokenValue());
+
+        if (!(driverResponse.email().equals(userEmail)||passengerResponse.email().equals(userEmail))) {
+            throw new AccessDeniedException(
+                    messageSource.getMessage(ACCESS_DENIED_MESSAGE,
+                            new Object[]{}, LocaleContextHolder.getLocale())
+            );
+        }
     }
 
     @Override
