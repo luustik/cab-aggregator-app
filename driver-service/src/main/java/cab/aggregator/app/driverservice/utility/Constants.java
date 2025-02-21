@@ -13,6 +13,7 @@ public final class Constants {
     public static final String VALIDATION_FAILED_MESSAGE = "validation.failed.message";
     public static final String DEFAULT_EXCEPTION_MESSAGE = "default.exception.message";
     public static final String ACCESS_DENIED_MESSAGE = "access.denied.message";
+    public static final String ENTITY_NOT_FOUND_KEYCLOAK_MESSAGE = "entity.not.found.keycloak.message";
 
     public static final String GENDER_PATTERN = "^(MALE|FEMALE)$";
     public static final String EMAIL_PATTERN = "^[\\w.-]+@[\\w.-]+\\.[\\w.-]+$";
@@ -26,6 +27,7 @@ public final class Constants {
     public static final String REALM_ACCESS_CLAIM =  "realm_access";
     public static final String REALM_ACCESS_CLAIM_VALUE = "roles";
     public static final String ROLE_PREFIX = "ROLE_";
+    public static final String GENDER_FIELD = "gender";
 
     public static final String ACTUATOR_ENDPOINT = "/actuator/**";
     public static final String SWAGGER_UI_ENDPOINT = "/swagger-ui/**";

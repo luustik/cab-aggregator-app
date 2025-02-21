@@ -1,6 +1,7 @@
 package cab.aggregator.app.driverservice.controller;
 
 import cab.aggregator.app.driverservice.dto.request.DriverRequest;
+import cab.aggregator.app.driverservice.dto.request.PasswordRequest;
 import cab.aggregator.app.driverservice.dto.response.DriverContainerResponse;
 import cab.aggregator.app.driverservice.dto.response.DriverResponse;
 import cab.aggregator.app.driverservice.dto.validation.OnCreate;
@@ -47,4 +48,7 @@ public interface DriverAPI {
 
     @Operation(summary = "Update driver by Id")
     DriverResponse updateDriver(int id, @Valid @Validated(OnUpdate.class) DriverRequest request, JwtAuthenticationToken jwtAuthenticationToken);
+
+    @Operation(summary = "Update driver password by id")
+    void updatePassword(int id, @Valid @Validated(OnUpdate.class) PasswordRequest request, JwtAuthenticationToken jwtAuthenticationToken);
 }

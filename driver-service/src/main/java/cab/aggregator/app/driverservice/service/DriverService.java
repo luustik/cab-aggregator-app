@@ -1,6 +1,7 @@
 package cab.aggregator.app.driverservice.service;
 
 import cab.aggregator.app.driverservice.dto.request.DriverRequest;
+import cab.aggregator.app.driverservice.dto.request.PasswordRequest;
 import cab.aggregator.app.driverservice.dto.response.DriverContainerResponse;
 import cab.aggregator.app.driverservice.dto.response.DriverResponse;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -23,4 +24,5 @@ public interface DriverService {
 
     DriverResponse updateDriver(int id, DriverRequest driverRequestDto, JwtAuthenticationToken token);
 
+    void updatePassword(int driverId, PasswordRequest passwordRequestDto, JwtAuthenticationToken token);
 }

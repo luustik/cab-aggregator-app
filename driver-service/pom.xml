@@ -32,6 +32,7 @@
         <springdoc.version>2.5.0</springdoc.version>
         <spring-cloud.version>2023.0.3</spring-cloud.version>
         <cucumber.version>7.11.0</cucumber.version>
+        <keycloak.version>26.0.0</keycloak.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -179,6 +180,11 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-jose</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>${keycloak.version}</version>
         </dependency>
     </dependencies>
 

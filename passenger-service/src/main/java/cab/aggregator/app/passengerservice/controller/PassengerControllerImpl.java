@@ -1,6 +1,7 @@
 package cab.aggregator.app.passengerservice.controller;
 
 import cab.aggregator.app.passengerservice.dto.request.PassengerRequest;
+import cab.aggregator.app.passengerservice.dto.request.PasswordRequest;
 import cab.aggregator.app.passengerservice.dto.response.PassengerContainerResponse;
 import cab.aggregator.app.passengerservice.dto.response.PassengerResponse;
 import cab.aggregator.app.passengerservice.dto.validation.OnCreate;
@@ -108,5 +109,13 @@ public class PassengerControllerImpl implements PassengerAPI {
                                           @Valid @Validated(OnUpdate.class) @RequestBody PassengerRequest request,
                                           JwtAuthenticationToken jwtAuthenticationToken) {
         return passengerService.updatePassenger(id, request, jwtAuthenticationToken);
+    }
+
+    @Override
+    @PutMapping("/{id}/reset-password")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PASSENGER')")
+    public void updatePassword(@PathVariable int id,
+                               @Valid @Validated(OnUpdate.class) @RequestBody PasswordRequest request, JwtAuthenticationToken jwtAuthenticationToken) {
+        passengerService.updatePassword(id, request, jwtAuthenticationToken);
     }
 }

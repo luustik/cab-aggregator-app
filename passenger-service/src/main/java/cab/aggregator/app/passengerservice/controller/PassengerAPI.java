@@ -1,6 +1,7 @@
 package cab.aggregator.app.passengerservice.controller;
 
 import cab.aggregator.app.passengerservice.dto.request.PassengerRequest;
+import cab.aggregator.app.passengerservice.dto.request.PasswordRequest;
 import cab.aggregator.app.passengerservice.dto.response.PassengerContainerResponse;
 import cab.aggregator.app.passengerservice.dto.response.PassengerResponse;
 import cab.aggregator.app.passengerservice.dto.validation.OnCreate;
@@ -49,4 +50,7 @@ public interface PassengerAPI {
 
     @Operation(summary = "Update passenger by Id")
     PassengerResponse updateDriver(int id, @Valid @Validated(OnUpdate.class) PassengerRequest request, JwtAuthenticationToken jwtAuthenticationToken);
+
+    @Operation(summary = "Update driver password by id")
+    void updatePassword(int id, @Valid @Validated(OnUpdate.class) PasswordRequest request, JwtAuthenticationToken jwtAuthenticationToken);
 }

@@ -1,6 +1,7 @@
 package cab.aggregator.app.driverservice.controller;
 
 import cab.aggregator.app.driverservice.dto.request.DriverRequest;
+import cab.aggregator.app.driverservice.dto.request.PasswordRequest;
 import cab.aggregator.app.driverservice.dto.response.DriverContainerResponse;
 import cab.aggregator.app.driverservice.dto.response.DriverResponse;
 import cab.aggregator.app.driverservice.dto.validation.OnCreate;
@@ -97,5 +98,13 @@ public class DriverController implements DriverAPI {
                                        @Valid @Validated(OnUpdate.class) @RequestBody DriverRequest request,
                                        JwtAuthenticationToken jwtAuthenticationToken) {
         return driverService.updateDriver(id, request, jwtAuthenticationToken);
+    }
+
+    @Override
+    @PutMapping("/{id}/reset-password")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER')")
+    public void updatePassword(@PathVariable int id,
+                               @Valid @Validated(OnUpdate.class) @RequestBody PasswordRequest request, JwtAuthenticationToken jwtAuthenticationToken) {
+        driverService.updatePassword(id, request, jwtAuthenticationToken);
     }
 }

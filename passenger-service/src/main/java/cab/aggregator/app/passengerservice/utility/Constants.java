@@ -13,6 +13,7 @@ public final class Constants {
     public static final String VALIDATION_FAILED_MESSAGE = "validation.failed.message";
     public static final String DEFAULT_EXCEPTION_MESSAGE = "default.exception.message";
     public static final String ACCESS_DENIED_MESSAGE = "access.denied.message";
+    public static final String ENTITY_NOT_FOUND_KEYCLOAK_MESSAGE = "entity.not.found.keycloak.message";
 
     public static final String EMAIL_PATTERN = "^[\\w.-]+@[\\w.-]+\\.[\\w.-]+$";
     public static final String PHONE_NUMBER_PATTERN = "\\+375\\((29|44|33|25)\\)\\d{7}$";

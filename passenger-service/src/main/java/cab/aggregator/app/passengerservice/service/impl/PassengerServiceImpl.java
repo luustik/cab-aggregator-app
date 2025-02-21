@@ -1,6 +1,8 @@
 package cab.aggregator.app.passengerservice.service.impl;
 
+import cab.aggregator.app.passengerservice.config.KeycloakProperties;
 import cab.aggregator.app.passengerservice.dto.request.PassengerRequest;
+import cab.aggregator.app.passengerservice.dto.request.PasswordRequest;
 import cab.aggregator.app.passengerservice.dto.response.PassengerContainerResponse;
 import cab.aggregator.app.passengerservice.dto.response.PassengerResponse;
 import cab.aggregator.app.passengerservice.entity.Passenger;
@@ -12,6 +14,11 @@ import cab.aggregator.app.passengerservice.mapper.PassengerMapper;
 import cab.aggregator.app.passengerservice.repository.PassengerRepository;
 import cab.aggregator.app.passengerservice.service.PassengerService;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
@@ -19,10 +26,12 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Locale;
 
 import static cab.aggregator.app.passengerservice.utility.Constants.ACCESS_DENIED_MESSAGE;
 import static cab.aggregator.app.passengerservice.utility.Constants.EMAIL_CLAIM;
+import static cab.aggregator.app.passengerservice.utility.Constants.ENTITY_NOT_FOUND_KEYCLOAK_MESSAGE;
 import static cab.aggregator.app.passengerservice.utility.Constants.PASSENGER;
 import static cab.aggregator.app.passengerservice.utility.Constants.RESOURCE_ALREADY_EXIST_MESSAGE;
 import static cab.aggregator.app.passengerservice.utility.Constants.ENTITY_WITH_ID_NOT_FOUND_MESSAGE;
@@ -37,6 +46,8 @@ public class PassengerServiceImpl implements PassengerService {
     private final PassengerMapper passengerMapper;
     private final PassengerContainerMapper passengerContainerMapper;
     private final MessageSource messageSource;
+    private final Keycloak keycloak;
+    private final KeycloakProperties keycloakProperties;
 
     @Override
     @Transactional(readOnly = true)
@@ -85,6 +96,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Transactional
     public void hardDeletePassenger(int id) {
         Passenger passenger = findPassengerByIdForAdmin(id);
+        deleteUserFromKeycloakByUsername(passenger.getEmail());
         passengerRepository.delete(passenger);
     }
 
@@ -107,17 +119,84 @@ public class PassengerServiceImpl implements PassengerService {
     @Transactional
     public PassengerResponse updatePassenger(int id, PassengerRequest passengerRequestDto, JwtAuthenticationToken token) {
         Passenger passenger = findPassengerById(id);
+        String email = passenger.getEmail();
         if (!passengerRequestDto.email().equals(passenger.getEmail())) {
             checkIfEmailUnique(passengerRequestDto);
         }
         if (!passengerRequestDto.phone().equals(passenger.getPhone())) {
             checkIfPhoneUnique(passengerRequestDto);
         }
+        validateAccessOrThrow(passenger, token);
         passengerMapper.updatePassengerFromDto(passengerRequestDto, passenger);
         passenger.setDeleted(false);
-        validateAccessOrThrow(passenger, token);
+        updateUserInKeycloak(email,passenger);
         passengerRepository.save(passenger);
         return passengerMapper.toDto(passenger);
+    }
+
+    @Override
+    @Transactional
+    public void updatePassword(int id, PasswordRequest request, JwtAuthenticationToken token) {
+        Passenger passenger = findPassengerById(id);
+        validateAccessOrThrow(passenger, token);
+        updatePasswordUserInKeycloak(passenger.getEmail(), request.password());
+    }
+
+    private void updatePasswordUserInKeycloak(String email, String password) {
+        UsersResource usersResource = keycloak.realm(keycloakProperties.getRealm()).users();
+        List<UserRepresentation> users = usersResource.search(email, true);
+
+        if (users == null || users.isEmpty()) {
+            throw new EntityNotFoundException(messageSource.getMessage(
+                    ENTITY_NOT_FOUND_KEYCLOAK_MESSAGE,
+                    new Object[]{email}, Locale.getDefault()));
+        }
+
+        String userId = users.get(0).getId();
+        UserRepresentation userRepresentation = users.get(0);
+
+        CredentialRepresentation credential = new CredentialRepresentation();
+        credential.setType(CredentialRepresentation.PASSWORD);
+        credential.setValue(password);
+
+        userRepresentation.setCredentials(List.of(credential));
+
+        usersResource.get(userId).update(userRepresentation);
+    }
+
+    private void deleteUserFromKeycloakByUsername(String username) {
+        UsersResource usersResource = keycloak.realm(keycloakProperties.getRealm()).users();
+        List<UserRepresentation> users = usersResource.search(username, true);
+
+        if (users == null || users.isEmpty()) {
+            throw  new EntityNotFoundException(messageSource.getMessage(ENTITY_NOT_FOUND_KEYCLOAK_MESSAGE,
+                    new Object[]{}, Locale.getDefault()));
+        }
+
+        String userId = users.get(0).getId();
+
+        RealmResource realm = keycloak.realm(keycloakProperties.getRealm());
+        realm.users().delete(userId);
+    }
+
+    private void updateUserInKeycloak(String email, Passenger passenger) {
+        UsersResource usersResource = keycloak.realm(keycloakProperties.getRealm()).users();
+        List<UserRepresentation> users = usersResource.search(email, true);
+
+        if (users == null || users.isEmpty()) {
+            throw new EntityNotFoundException(messageSource.getMessage(
+                    ENTITY_NOT_FOUND_KEYCLOAK_MESSAGE,
+                    new Object[]{email}, Locale.getDefault()));
+        }
+
+        String userId = users.get(0).getId();
+        UserRepresentation userRepresentation = users.get(0);
+
+        userRepresentation.setFirstName(passenger.getName());
+        userRepresentation.setEmail(passenger.getEmail());
+        userRepresentation.setEnabled(!passenger.isDeleted());
+
+        usersResource.get(userId).update(userRepresentation);
     }
 
     private void validateAccessOrThrow(Passenger passenger, JwtAuthenticationToken token) {

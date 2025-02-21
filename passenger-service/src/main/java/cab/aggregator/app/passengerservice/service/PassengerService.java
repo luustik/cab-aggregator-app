@@ -1,6 +1,7 @@
 package cab.aggregator.app.passengerservice.service;
 
 import cab.aggregator.app.passengerservice.dto.request.PassengerRequest;
+import cab.aggregator.app.passengerservice.dto.request.PasswordRequest;
 import cab.aggregator.app.passengerservice.dto.response.PassengerContainerResponse;
 import cab.aggregator.app.passengerservice.dto.response.PassengerResponse;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -24,4 +25,6 @@ public interface PassengerService {
     PassengerResponse createPassenger(PassengerRequest passengerRequestDto);
 
     PassengerResponse updatePassenger(int id, PassengerRequest driverRequestDto, JwtAuthenticationToken token);
+
+    void updatePassword(int driverId, PasswordRequest passwordRequestDto, JwtAuthenticationToken token);
 }

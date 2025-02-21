@@ -25,18 +25,18 @@ services:
     networks:
       - cab-aggregator-app
     depends_on:
-      ride_db:
-        condition: service_healthy
+#      ride_db:
+#        condition: service_healthy
       passenger_db:
         condition: service_healthy
       driver_db:
         condition: service_healthy
-      rating_db:
-        condition: service_healthy
+#      rating_db:
+#        condition: service_healthy
       kafka:
         condition: service_healthy
-      zipkin:
-        condition: service_healthy
+#      zipkin:
+#        condition: service_healthy
       keycloak:
         condition: service_healthy
     healthcheck:
@@ -92,10 +92,10 @@ services:
         condition: service_healthy
       passenger-service:
         condition: service_healthy
-      rating-service:
-        condition: service_healthy
-      ride-service:
-        condition: service_healthy
+#      rating-service:
+#        condition: service_healthy
+#      ride-service:
+#        condition: service_healthy
     networks:
       - cab-aggregator-app
     healthcheck:
@@ -123,6 +123,10 @@ services:
       - KAFKA=${KAFKA}
       - ZIPKIN=${ZIPKIN}
       - JWT_ISSUER_URL=${JWT_ISSUER_URL}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - KEYCLOAK_ADMIN_CLIENT_URL=${KEYCLOAK_ADMIN_CLIENT_URL}
+      - CLIENT_ID_FOR_AUTH_KC=${CLIENT_ID_FOR_AUTH_KC}
+      - KC_REALM=${KC_REALM}
     depends_on:
       config-server:
         condition: service_healthy
@@ -152,6 +156,10 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_URL}
       - KAFKA=${KAFKA}
       - ZIPKIN=${ZIPKIN}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - KEYCLOAK_ADMIN_CLIENT_URL=${KEYCLOAK_ADMIN_CLIENT_URL}
+      - CLIENT_ID_FOR_AUTH_KC=${CLIENT_ID_FOR_AUTH_KC}
+      - KC_REALM=${KC_REALM}
       - JWT_ISSUER_URL=${JWT_ISSUER_URL}
     depends_on:
       config-server:
@@ -165,64 +173,64 @@ services:
       retries: 10
       start_period: 90s
 
-  rating-service:
-    image: rating-service:latest
-    container_name: rating-service
-    build:
-      context: ../
-      dockerfile: docker/Dockerfile
-      args:
-        SERVICE_NAME: rating-service
-    expose:
-      - "8084:8084"
-    environment:
-      - DB_URL=${RATING_DB_URL}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_URL}
-      - KAFKA=${KAFKA}
-      - ZIPKIN=${ZIPKIN}
-      - JWT_ISSUER_URL=${JWT_ISSUER_URL}
-    depends_on:
-      config-server:
-        condition: service_healthy
-    networks:
-      - cab-aggregator-app
-    healthcheck:
-      test: [ "CMD-SHELL", "curl --fail http://rating-service:8084/actuator/health" ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 90s
-
-  ride-service:
-    image: ride-service:latest
-    container_name: ride-service
-    build:
-      context: ../
-      dockerfile: docker/Dockerfile
-      args:
-        SERVICE_NAME: ride-service
-    expose:
-      - "8083:8083"
-    environment:
-      - DB_URL=${RIDE_DB_URL}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_URL}
-      - ZIPKIN=${ZIPKIN}
-      - JWT_ISSUER_URL=${JWT_ISSUER_URL}
-    depends_on:
-      config-server:
-        condition: service_healthy
-    networks:
-      - cab-aggregator-app
-    healthcheck:
-      test: [ "CMD-SHELL", "curl --fail http://ride-service:8083/actuator/health" ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 90s
+#  rating-service:
+#    image: rating-service:latest
+#    container_name: rating-service
+#    build:
+#      context: ../
+#      dockerfile: docker/Dockerfile
+#      args:
+#        SERVICE_NAME: rating-service
+#    expose:
+#      - "8084:8084"
+#    environment:
+#      - DB_URL=${RATING_DB_URL}
+#      - DB_USERNAME=${DB_USERNAME}
+#      - DB_PASSWORD=${DB_PASSWORD}
+#      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_URL}
+#      - KAFKA=${KAFKA}
+#      - ZIPKIN=${ZIPKIN}
+#      - JWT_ISSUER_URL=${JWT_ISSUER_URL}
+#    depends_on:
+#      config-server:
+#        condition: service_healthy
+#    networks:
+#      - cab-aggregator-app
+#    healthcheck:
+#      test: [ "CMD-SHELL", "curl --fail http://rating-service:8084/actuator/health" ]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 10
+#      start_period: 90s
+#
+#  ride-service:
+#    image: ride-service:latest
+#    container_name: ride-service
+#    build:
+#      context: ../
+#      dockerfile: docker/Dockerfile
+#      args:
+#        SERVICE_NAME: ride-service
+#    expose:
+#      - "8083:8083"
+#    environment:
+#      - DB_URL=${RIDE_DB_URL}
+#      - DB_USERNAME=${DB_USERNAME}
+#      - DB_PASSWORD=${DB_PASSWORD}
+#      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_URL}
+#      - ZIPKIN=${ZIPKIN}
+#      - JWT_ISSUER_URL=${JWT_ISSUER_URL}
+#    depends_on:
+#      config-server:
+#        condition: service_healthy
+#    networks:
+#      - cab-aggregator-app
+#    healthcheck:
+#      test: [ "CMD-SHELL", "curl --fail http://ride-service:8083/actuator/health" ]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 10
+#      start_period: 90s
 
   gateway-service:
     image: gateway-service:latest
@@ -242,10 +250,10 @@ services:
         condition: service_healthy
       passenger-service:
         condition: service_healthy
-      rating-service:
-        condition: service_healthy
-      ride-service:
-        condition: service_healthy
+#      rating-service:
+#        condition: service_healthy
+#      ride-service:
+#        condition: service_healthy
       auth-service:
         condition: service_healthy
     networks:
@@ -266,9 +274,9 @@ services:
       - zookeeper_data:/wurstmeister/zookeeper
     networks:
       - cab-aggregator-app
-    depends_on:
-      kibana:
-        condition: service_healthy
+#    depends_on:
+#      kibana:
+#        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "echo", "ruok", "|", "nc", "localhost", "2181", "|", "grep", "imok"]
       interval: 5s
@@ -315,9 +323,9 @@ services:
       - "5431:5432"
     networks:
       - cab-aggregator-app
-    depends_on:
-      kibana:
-        condition: service_healthy
+#    depends_on:
+#      kibana:
+#        condition: service_healthy
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U user -d passenger_db" ]
       interval: 1s
@@ -338,9 +346,9 @@ services:
       - "5432:5432"
     networks:
       - cab-aggregator-app
-    depends_on:
-      kibana:
-        condition: service_healthy
+#    depends_on:
+#      kibana:
+#        condition: service_healthy
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U user -d driver_db" ]
       interval: 1s
@@ -348,51 +356,51 @@ services:
       retries: 5
       start_period: 5s
 
-  ride_db:
-    image: postgres:15.1-alpine
-    container_name: ride-db
-    environment:
-      - POSTGRES_USER=${DB_USERNAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=ride_db
-    volumes:
-      - pg_ride:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
-    depends_on:
-      kibana:
-        condition: service_healthy
-    networks:
-      - cab-aggregator-app
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U user -d ride_db" ]
-      interval: 1s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
-
-  rating_db:
-    image: postgres:15.1-alpine
-    container_name: rating-db
-    environment:
-      - POSTGRES_USER=${DB_USERNAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=rating_db
-    volumes:
-      - pg_rating:/var/lib/postgresql/data
-    ports:
-      - "5434:5432"
-    depends_on:
-      kibana:
-        condition: service_healthy
-    networks:
-      - cab-aggregator-app
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U user -d rating_db" ]
-      interval: 1s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
+#  ride_db:
+#    image: postgres:15.1-alpine
+#    container_name: ride-db
+#    environment:
+#      - POSTGRES_USER=${DB_USERNAME}
+#      - POSTGRES_PASSWORD=${DB_PASSWORD}
+#      - POSTGRES_DB=ride_db
+#    volumes:
+#      - pg_ride:/var/lib/postgresql/data
+#    ports:
+#      - "5433:5432"
+#    depends_on:
+#      kibana:
+#        condition: service_healthy
+#    networks:
+#      - cab-aggregator-app
+#    healthcheck:
+#      test: [ "CMD-SHELL", "pg_isready -U user -d ride_db" ]
+#      interval: 1s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 5s
+#
+#  rating_db:
+#    image: postgres:15.1-alpine
+#    container_name: rating-db
+#    environment:
+#      - POSTGRES_USER=${DB_USERNAME}
+#      - POSTGRES_PASSWORD=${DB_PASSWORD}
+#      - POSTGRES_DB=rating_db
+#    volumes:
+#      - pg_rating:/var/lib/postgresql/data
+#    ports:
+#      - "5434:5432"
+#    depends_on:
+#      kibana:
+#        condition: service_healthy
+#    networks:
+#      - cab-aggregator-app
+#    healthcheck:
+#      test: [ "CMD-SHELL", "pg_isready -U user -d rating_db" ]
+#      interval: 1s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 5s
 
   keycloak_db:
     image: postgres:15.1-alpine
@@ -405,9 +413,9 @@ services:
       - pg_keycloak:/var/lib/postgresql/data
     ports:
       - "5435:5432"
-    depends_on:
-      kibana:
-        condition: service_healthy
+#    depends_on:
+#      kibana:
+#        condition: service_healthy
     networks:
       - cab-aggregator-app
     healthcheck:
@@ -444,143 +452,143 @@ services:
     networks:
       - cab-aggregator-app
 
-  elasticsearch:
-    image: elasticsearch:7.14.0
-    container_name: elasticsearch
-    ports:
-      - "9200:9200"
-    volumes:
-      - elastic_data:/usr/share/elasticsearch/data/
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - xpack.monitoring.enabled=false
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9200/_cluster/health" ]
-      interval: 5s
-      retries: 5
-      timeout: 15s
-      start_period: 30s
-    networks:
-      - cab-aggregator-app
-
-  logstash:
-    image: logstash:7.14.0
-    container_name: logstash
-    ports:
-      - "5044:5044"
-    volumes:
-      - ./monitoring/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9600/_node/stats" ]
-      interval: 5s
-      retries: 5
-      timeout: 15s
-      start_period: 30s
-    networks:
-      - cab-aggregator-app
-
-  filebeat:
-    image: elastic/filebeat:7.14.0
-    container_name: filebeat
-    command: ["filebeat", "-e", "--strict.perms=false"]
-    user: root
-    volumes:
-      - ./monitoring/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/log:/var/log:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    depends_on:
-      logstash:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "pgrep filebeat || exit 1"]
-      interval: 5s
-      retries: 5
-      timeout: 15s
-      start_period: 30s
-    networks:
-      - cab-aggregator-app
-
-  kibana:
-    image: kibana:7.14.0
-    container_name: kibana
-    ports:
-      - "5601:5601"
-    environment:
-      ELASTICSEARCH_URL: ${ELASTICSEARCH_URL}
-    depends_on:
-      filebeat:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5601/status"]
-      interval: 5s
-      retries: 5
-      timeout: 15s
-      start_period: 30s
-    networks:
-      - cab-aggregator-app
-
-  grafana:
-    container_name: grafana
-    build: './monitoring/grafana'
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./monitoring/grafana:/var/lib/grafana
-    environment:
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
-    depends_on:
-      prometheus:
-        condition: service_healthy
-    networks:
-      - cab-aggregator-app
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:3000/-/healthy" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 25s
-
-  prometheus:
-    container_name: prometheus
-    image: prom/prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./monitoring/prometheus:/prometheus
-    depends_on:
-      gateway-service:
-        condition: service_healthy
-    networks:
-      - cab-aggregator-app
-    healthcheck:
-      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 25s
-
-  zipkin:
-    image: openzipkin/zipkin:latest
-    container_name: zipkin
-    ports:
-      - "9411:9411"
-    networks:
-      - cab-aggregator-app
-    healthcheck:
-      test: [ "CMD", "wget", "-q", "--spider", "http://localhost:9411/health" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
+#  elasticsearch:
+#    image: elasticsearch:7.14.0
+#    container_name: elasticsearch
+#    ports:
+#      - "9200:9200"
+#    volumes:
+#      - elastic_data:/usr/share/elasticsearch/data/
+#    environment:
+#      - discovery.type=single-node
+#      - xpack.security.enabled=false
+#      - xpack.monitoring.enabled=false
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:9200/_cluster/health" ]
+#      interval: 5s
+#      retries: 5
+#      timeout: 15s
+#      start_period: 30s
+#    networks:
+#      - cab-aggregator-app
+#
+#  logstash:
+#    image: logstash:7.14.0
+#    container_name: logstash
+#    ports:
+#      - "5044:5044"
+#    volumes:
+#      - ./monitoring/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+#    depends_on:
+#      elasticsearch:
+#        condition: service_healthy
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:9600/_node/stats" ]
+#      interval: 5s
+#      retries: 5
+#      timeout: 15s
+#      start_period: 30s
+#    networks:
+#      - cab-aggregator-app
+#
+#  filebeat:
+#    image: elastic/filebeat:7.14.0
+#    container_name: filebeat
+#    command: ["filebeat", "-e", "--strict.perms=false"]
+#    user: root
+#    volumes:
+#      - ./monitoring/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+#      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+#      - /var/log:/var/log:ro
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
+#    depends_on:
+#      logstash:
+#        condition: service_healthy
+#    healthcheck:
+#      test: ["CMD-SHELL", "pgrep filebeat || exit 1"]
+#      interval: 5s
+#      retries: 5
+#      timeout: 15s
+#      start_period: 30s
+#    networks:
+#      - cab-aggregator-app
+#
+#  kibana:
+#    image: kibana:7.14.0
+#    container_name: kibana
+#    ports:
+#      - "5601:5601"
+#    environment:
+#      ELASTICSEARCH_URL: ${ELASTICSEARCH_URL}
+#    depends_on:
+#      filebeat:
+#        condition: service_healthy
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:5601/status"]
+#      interval: 5s
+#      retries: 5
+#      timeout: 15s
+#      start_period: 30s
+#    networks:
+#      - cab-aggregator-app
+#
+#  grafana:
+#    container_name: grafana
+#    build: './monitoring/grafana'
+#    ports:
+#      - "3000:3000"
+#    volumes:
+#      - ./monitoring/grafana:/var/lib/grafana
+#    environment:
+#      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN}
+#      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+#    depends_on:
+#      prometheus:
+#        condition: service_healthy
+#    networks:
+#      - cab-aggregator-app
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:3000/-/healthy" ]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 25s
+#
+#  prometheus:
+#    container_name: prometheus
+#    image: prom/prometheus
+#    ports:
+#      - "9090:9090"
+#    volumes:
+#      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#      - ./monitoring/prometheus:/prometheus
+#    depends_on:
+#      gateway-service:
+#        condition: service_healthy
+#    networks:
+#      - cab-aggregator-app
+#    healthcheck:
+#      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy" ]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 25s
+#
+#  zipkin:
+#    image: openzipkin/zipkin:latest
+#    container_name: zipkin
+#    ports:
+#      - "9411:9411"
+#    networks:
+#      - cab-aggregator-app
+#    healthcheck:
+#      test: [ "CMD", "wget", "-q", "--spider", "http://localhost:9411/health" ]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 20s
 
 networks:
   cab-aggregator-app:
