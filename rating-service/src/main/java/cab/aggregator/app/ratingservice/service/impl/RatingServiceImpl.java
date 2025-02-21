@@ -1,5 +1,8 @@
 package cab.aggregator.app.ratingservice.service.impl;
 
+import cab.aggregator.app.ratingservice.dto.client.DriverResponse;
+import cab.aggregator.app.ratingservice.dto.client.PassengerResponse;
+import cab.aggregator.app.ratingservice.dto.client.RideResponse;
 import cab.aggregator.app.ratingservice.dto.kafka.AvgRatingUserResponse;
 import cab.aggregator.app.ratingservice.dto.request.RatingRequest;
 import cab.aggregator.app.ratingservice.dto.request.RatingUpdateDto;
@@ -7,6 +10,7 @@ import cab.aggregator.app.ratingservice.dto.response.RatingContainerResponse;
 import cab.aggregator.app.ratingservice.dto.response.RatingResponse;
 import cab.aggregator.app.ratingservice.entity.Rating;
 import cab.aggregator.app.ratingservice.entity.enums.UserRole;
+import cab.aggregator.app.ratingservice.exception.AccessDeniedException;
 import cab.aggregator.app.ratingservice.exception.EntityNotFoundException;
 import cab.aggregator.app.ratingservice.kafka.KafkaSender;
 import cab.aggregator.app.ratingservice.mapper.RatingContainerMapper;
@@ -25,10 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static cab.aggregator.app.ratingservice.utility.Constants.ENTITY_RESOURCE_NOT_FOUND_MESSAGE;
-import static cab.aggregator.app.ratingservice.utility.Constants.ENTITY_WITH_ID_NOT_FOUND_MESSAGE;
-import static cab.aggregator.app.ratingservice.utility.Constants.RATING;
-import static cab.aggregator.app.ratingservice.utility.Constants.RIDE;
+import static cab.aggregator.app.ratingservice.utility.Constants.*;
 
 @Service
 @RequiredArgsConstructor
@@ -96,11 +97,12 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional
-    public RatingResponse createRating(RatingRequest ratingRequest) {
+    public RatingResponse createRating(RatingRequest ratingRequest, JwtAuthenticationToken token) {
         Rating rating = ratingMapper.toEntity(ratingRequest);
         validator.checkIfExistUser(rating.getUserId(), rating.getUserRole(), getAuthToken());
         validator.checkIfExistRide(rating.getRideId(), getAuthToken());
         validator.checkIfExistRatingByRideIdAndRole(rating.getRideId(), rating.getUserRole());
+        validateAccessOrThrow(rating, token);
         ratingRepository.save(rating);
         AvgRatingUserResponse avgRatingUserResponse = calculateAvgRating(rating.getUserId(), rating.getUserRole());
         sendUserAvgRating(avgRatingUserResponse, rating.getUserRole());
@@ -127,6 +129,27 @@ public class RatingServiceImpl implements RatingService {
         AvgRatingUserResponse avgRatingUserResponse = calculateAvgRating(id, role);
         sendUserAvgRating(avgRatingUserResponse, role);
         return avgRatingUserResponse;
+    }
+
+    private void validateAccessOrThrow(Rating rating, JwtAuthenticationToken token) {
+        if (token.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals(ROLE_ADMIN))) {
+            return;
+        }
+
+        String userEmail = token.getToken().getClaims().get(EMAIL_CLAIM).toString();
+
+        RideResponse rideResponse = validator.getRideByRideId(rating.getRideId(), "Bearer " + token.getToken().getTokenValue());
+
+        DriverResponse driverResponse = validator.getDriverResponse(rideResponse.driverId(), "Bearer " + token.getToken().getTokenValue());
+        PassengerResponse passengerResponse = validator.getPassengerResponse(rideResponse.passengerId(), "Bearer " + token.getToken().getTokenValue());
+
+        if (!(driverResponse.email().equals(userEmail)||passengerResponse.email().equals(userEmail))) {
+            throw new AccessDeniedException(
+                    messageSource.getMessage(ACCESS_DENIED_MESSAGE,
+                            new Object[]{}, LocaleContextHolder.getLocale())
+            );
+        }
     }
 
     private String getAuthToken(){

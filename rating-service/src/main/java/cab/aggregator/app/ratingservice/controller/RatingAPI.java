@@ -14,6 +14,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 
 import static cab.aggregator.app.ratingservice.utility.Constants.REGEXP_ROLE;
@@ -53,7 +54,7 @@ public interface RatingAPI {
     public void deleteRatingById(Long id);
 
     @Operation(summary = "Create new rating")
-    public ResponseEntity<RatingResponse> createRating(@Valid @Validated(OnCreate.class) RatingRequest request);
+    public ResponseEntity<RatingResponse> createRating(@Valid @Validated(OnCreate.class) RatingRequest request, JwtAuthenticationToken token);
 
     @Operation(summary = "Update rating by ID")
     public RatingResponse updateRating(Long id, @Valid @Validated(OnUpdate.class) RatingUpdateDto ratingUpdateDto);

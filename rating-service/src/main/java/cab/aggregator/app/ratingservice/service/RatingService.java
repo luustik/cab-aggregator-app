@@ -5,6 +5,7 @@ import cab.aggregator.app.ratingservice.dto.request.RatingRequest;
 import cab.aggregator.app.ratingservice.dto.request.RatingUpdateDto;
 import cab.aggregator.app.ratingservice.dto.response.RatingContainerResponse;
 import cab.aggregator.app.ratingservice.dto.response.RatingResponse;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 public interface RatingService {
 
@@ -20,7 +21,7 @@ public interface RatingService {
 
     void deleteRating(Long id);
 
-    RatingResponse createRating(RatingRequest ratingRequest);
+    RatingResponse createRating(RatingRequest ratingRequest, JwtAuthenticationToken token);
 
     RatingResponse updateRating(Long id, RatingUpdateDto ratingUpdateDto);
 

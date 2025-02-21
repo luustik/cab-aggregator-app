@@ -3,6 +3,9 @@ package cab.aggregator.app.ratingservice.service.impl;
 import cab.aggregator.app.ratingservice.client.driver.DriverClientContainer;
 import cab.aggregator.app.ratingservice.client.passenger.PassengerClientContainer;
 import cab.aggregator.app.ratingservice.client.ride.RideClientContainer;
+import cab.aggregator.app.ratingservice.dto.client.DriverResponse;
+import cab.aggregator.app.ratingservice.dto.client.PassengerResponse;
+import cab.aggregator.app.ratingservice.dto.client.RideResponse;
 import cab.aggregator.app.ratingservice.entity.enums.UserRole;
 import cab.aggregator.app.ratingservice.exception.ResourceAlreadyExistException;
 import cab.aggregator.app.ratingservice.repository.RatingRepository;
@@ -49,6 +52,18 @@ public class Validator {
             throw new ResourceAlreadyExistException(messageSource.getMessage(RESOURCE_ALREADY_EXISTS_MESSAGE,
                     new Object[]{RATING, RIDE, rideId, role.toString()}, LocaleContextHolder.getLocale()));
         }
+    }
+
+    public RideResponse getRideByRideId(Long rideId, String authToken) {
+        return rideClientContainer.getById(rideId, authToken);
+    }
+
+    public DriverResponse getDriverResponse(Long driverId, String authToken) {
+        return driverClientContainer.getById(driverId.intValue(), authToken);
+    }
+
+    public PassengerResponse getPassengerResponse(Long passengerId, String authToken) {
+        return passengerClientContainer.getById(passengerId.intValue(), authToken);
     }
 
 }
