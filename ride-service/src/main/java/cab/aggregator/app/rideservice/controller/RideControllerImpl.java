@@ -27,8 +27,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import static cab.aggregator.app.rideservice.utility.Constants.REGEXP_DATE_TIME;
-import static cab.aggregator.app.rideservice.utility.Constants.REGEXP_STATUS;
+import static cab.aggregator.app.rideservice.utility.RegExp.REGEXP_DATE_TIME;
+import static cab.aggregator.app.rideservice.utility.RegExp.REGEXP_STATUS;
+
 
 @RestController
 @RequestMapping("/api/v1/rides")

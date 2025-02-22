@@ -8,8 +8,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
-import static cab.aggregator.app.passengerservice.utility.Constants.EMAIL_PATTERN;
-import static cab.aggregator.app.passengerservice.utility.Constants.PHONE_NUMBER_PATTERN;
+import static cab.aggregator.app.passengerservice.utility.RegExp.EMAIL_PATTERN;
+import static cab.aggregator.app.passengerservice.utility.RegExp.PHONE_NUMBER_PATTERN;
+
 
 @Schema(description = "PassengerRequest DTO")
 public record PassengerRequest(

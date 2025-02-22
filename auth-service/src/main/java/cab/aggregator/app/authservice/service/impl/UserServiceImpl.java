@@ -49,18 +49,18 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static cab.aggregator.app.authservice.util.Constants.AUTH_TOKEN;
-import static cab.aggregator.app.authservice.util.Constants.CLIENT_ID_FIELD;
-import static cab.aggregator.app.authservice.util.Constants.CLIENT_SECRET_FIELD;
 import static cab.aggregator.app.authservice.util.Constants.DRIVER_ROLE;
-import static cab.aggregator.app.authservice.util.Constants.GENDER_FIELD;
-import static cab.aggregator.app.authservice.util.Constants.GRANT_TYPE_FIELD;
-import static cab.aggregator.app.authservice.util.Constants.GRANT_TYPE_PASSWORD_FIELD;
 import static cab.aggregator.app.authservice.util.Constants.PASSENGER_ROLE;
-import static cab.aggregator.app.authservice.util.Constants.PASSWORD_FIELD;
-import static cab.aggregator.app.authservice.util.Constants.REFRESH_TOKEN_FIELD;
-import static cab.aggregator.app.authservice.util.Constants.SERVICE_UNAVAILABLE_MESSAGE;
-import static cab.aggregator.app.authservice.util.Constants.USERNAME_FIELD;
+import static cab.aggregator.app.authservice.util.KeycloakConstants.AUTH_TOKEN;
+import static cab.aggregator.app.authservice.util.KeycloakConstants.CLIENT_ID_FIELD;
+import static cab.aggregator.app.authservice.util.KeycloakConstants.CLIENT_SECRET_FIELD;
+import static cab.aggregator.app.authservice.util.KeycloakConstants.GENDER_FIELD;
+import static cab.aggregator.app.authservice.util.KeycloakConstants.GRANT_TYPE_FIELD;
+import static cab.aggregator.app.authservice.util.KeycloakConstants.GRANT_TYPE_PASSWORD_FIELD;
+import static cab.aggregator.app.authservice.util.KeycloakConstants.PASSWORD_FIELD;
+import static cab.aggregator.app.authservice.util.KeycloakConstants.REFRESH_TOKEN_FIELD;
+import static cab.aggregator.app.authservice.util.KeycloakConstants.USERNAME_FIELD;
+import static cab.aggregator.app.authservice.util.MessageKeys.SERVICE_UNAVAILABLE_KEY;
 
 @Service
 @RequiredArgsConstructor
@@ -80,9 +80,8 @@ public class UserServiceImpl implements UserService {
         RealmResource realmResource = keycloak.realm(keycloakProperties.getRealm());
         UsersResource usersResource = realmResource.users();
         String adminClientAccessToken = keycloak.tokenManager().getAccessTokenString();
-        Response response;
-        response = Optional.ofNullable(usersResource.create(keycloakUser))
-                .orElseThrow(() -> new ServiceUnavailableException(messageSource.getMessage(SERVICE_UNAVAILABLE_MESSAGE, new Object[]{}, LocaleContextHolder.getLocale())));
+        Response response = Optional.ofNullable(usersResource.create(keycloakUser))
+                .orElseThrow(() -> new ServiceUnavailableException(messageSource.getMessage(SERVICE_UNAVAILABLE_KEY, new Object[]{}, LocaleContextHolder.getLocale())));
         if (response.getStatus() == HttpStatus.CREATED.value()) {
             try {
                 switch (signUpDto.role()) {

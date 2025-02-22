@@ -14,19 +14,19 @@ public class Validator {
     private final DriverClientContainer driverClientContainer;
     private final PassengerClientContainer passengerClientContainer;
 
-    public void checkIfExistPassenger(long passengerId, String authToken) {
-        passengerClientContainer.getById((int) passengerId, authToken);
+    public void checkIfExistPassenger(long passengerId, String authorization) {
+        passengerClientContainer.getById((int) passengerId, authorization);
     }
 
-    public void checkIfExistDriver(long driverId, String authToken) {
-        driverClientContainer.getById((int) driverId, authToken);
+    public void checkIfExistDriver(long driverId, String authorization) {
+        driverClientContainer.getById((int) driverId, authorization);
     }
 
-    public DriverResponse getDriverResponse(long driverId, String authToken) {
-        return driverClientContainer.getById((int) driverId, authToken);
+    public DriverResponse getDriverResponse(long driverId, String authorization) {
+        return driverClientContainer.getById((int) driverId, authorization);
     }
 
-    public PassengerResponse getPassengerResponse(long passengerId, String authToken) {
-        return passengerClientContainer.getById((int) passengerId, authToken);
+    public PassengerResponse getPassengerResponse(long passengerId, String authorization) {
+        return passengerClientContainer.getById((int) passengerId, authorization);
     }
 }

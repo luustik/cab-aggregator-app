@@ -2,6 +2,7 @@ package cab.aggregator.app.ratingservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -9,14 +10,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static cab.aggregator.app.ratingservice.utility.Constants.ACTUATOR_ENDPOINT;
-import static cab.aggregator.app.ratingservice.utility.Constants.API_DOCS_ENDPOINT;
-import static cab.aggregator.app.ratingservice.utility.Constants.SWAGGER_RESOURCES;
-import static cab.aggregator.app.ratingservice.utility.Constants.SWAGGER_UI_ENDPOINT;
-import static cab.aggregator.app.ratingservice.utility.Constants.WEBJARS_ENDPOINT;
+import static cab.aggregator.app.ratingservice.utility.EndPoints.ACTUATOR_ENDPOINT;
+import static cab.aggregator.app.ratingservice.utility.EndPoints.API_DOCS_ENDPOINT;
+import static cab.aggregator.app.ratingservice.utility.EndPoints.SWAGGER_RESOURCES;
+import static cab.aggregator.app.ratingservice.utility.EndPoints.SWAGGER_UI_ENDPOINT;
+import static cab.aggregator.app.ratingservice.utility.EndPoints.WEBJARS_ENDPOINT;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean

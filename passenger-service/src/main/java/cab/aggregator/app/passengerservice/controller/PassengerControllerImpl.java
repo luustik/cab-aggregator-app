@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import static cab.aggregator.app.passengerservice.utility.Constants.EMAIL_PATTERN;
-import static cab.aggregator.app.passengerservice.utility.Constants.PHONE_NUMBER_PATTERN;
+import static cab.aggregator.app.passengerservice.utility.RegExp.EMAIL_PATTERN;
+import static cab.aggregator.app.passengerservice.utility.RegExp.PHONE_NUMBER_PATTERN;
 
 @RestController
 @RequestMapping("/api/v1/passengers")

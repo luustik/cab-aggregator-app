@@ -15,7 +15,7 @@ import static cab.aggregator.app.driverservice.kafka.util.Constants.CONTAINER_FA
 import static cab.aggregator.app.driverservice.kafka.util.Constants.DRIVER_TOPIC;
 import static cab.aggregator.app.driverservice.kafka.util.Constants.GROUP_DRIVER;
 import static cab.aggregator.app.driverservice.utility.Constants.DRIVER;
-import static cab.aggregator.app.driverservice.utility.Constants.ENTITY_NOT_FOUND_MESSAGE;
+import static cab.aggregator.app.driverservice.utility.MessageKeys.ENTITY_NOT_FOUND_KEY;
 
 @Service
 @Slf4j
@@ -35,7 +35,7 @@ public class KafkaListenerService {
 
     private Driver findDriverById(int driverId) {
         return driverRepository.findByIdAndDeletedFalse(driverId).orElseThrow(() ->
-                new EntityNotFoundException(messageSource.getMessage(ENTITY_NOT_FOUND_MESSAGE,
+                new EntityNotFoundException(messageSource.getMessage(ENTITY_NOT_FOUND_KEY,
                         new Object[]{DRIVER, driverId}, LocaleContextHolder.getLocale()))
         );
     }

@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cab.aggregator.app.authservice.util.Constants.DEFAULT_EXCEPTION_MESSAGE;
-import static cab.aggregator.app.authservice.util.Constants.VALIDATION_FAILED_MESSAGE;
+import static cab.aggregator.app.authservice.util.MessageKeys.DEFAULT_EXCEPTION_KEY;
+import static cab.aggregator.app.authservice.util.MessageKeys.VALIDATION_FAILED_KEY;
 
 @Slf4j
 @RestControllerAdvice
@@ -65,7 +65,7 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return MultiException.builder()
-                .message(messageSource.getMessage(VALIDATION_FAILED_MESSAGE, null, LocaleContextHolder.getLocale()))
+                .message(messageSource.getMessage(VALIDATION_FAILED_KEY, null, LocaleContextHolder.getLocale()))
                 .errors(errors)
                 .build();
     }
@@ -80,7 +80,7 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return MultiException.builder()
-                .message(messageSource.getMessage(VALIDATION_FAILED_MESSAGE, null, LocaleContextHolder.getLocale()))
+                .message(messageSource.getMessage(VALIDATION_FAILED_KEY, null, LocaleContextHolder.getLocale()))
                 .errors(errors)
                 .build();
     }
@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
     public ExceptionDto handleException(Exception e) {
         log.error(e.getMessage(), e);
         return ExceptionDto.builder()
-                .message(messageSource.getMessage(DEFAULT_EXCEPTION_MESSAGE, null, LocaleContextHolder.getLocale()))
+                .message(messageSource.getMessage(DEFAULT_EXCEPTION_KEY, null, LocaleContextHolder.getLocale()))
                 .build();
     }
 }

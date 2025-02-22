@@ -33,13 +33,13 @@ import java.util.Locale;
 import java.util.Map;
 
 import static cab.aggregator.app.driverservice.utility.Constants.DRIVER;
-import static cab.aggregator.app.driverservice.utility.Constants.EMAIL_CLAIM;
-import static cab.aggregator.app.driverservice.utility.Constants.ENTITY_NOT_FOUND_KEYCLOAK_MESSAGE;
-import static cab.aggregator.app.driverservice.utility.Constants.ENTITY_NOT_FOUND_MESSAGE;
-import static cab.aggregator.app.driverservice.utility.Constants.GENDER_FIELD;
-import static cab.aggregator.app.driverservice.utility.Constants.RESOURCE_ALREADY_EXIST_MESSAGE;
-import static cab.aggregator.app.driverservice.utility.Constants.ROLE_ADMIN;
-import static cab.aggregator.app.driverservice.utility.Constants.ACCESS_DENIED_MESSAGE;
+import static cab.aggregator.app.driverservice.utility.KeycloakConstants.EMAIL_CLAIM;
+import static cab.aggregator.app.driverservice.utility.KeycloakConstants.GENDER_FIELD;
+import static cab.aggregator.app.driverservice.utility.KeycloakConstants.ROLE_ADMIN;
+import static cab.aggregator.app.driverservice.utility.MessageKeys.ACCESS_DENIED_KEY;
+import static cab.aggregator.app.driverservice.utility.MessageKeys.ENTITY_NOT_FOUND_KEYCLOAK_KEY;
+import static cab.aggregator.app.driverservice.utility.MessageKeys.ENTITY_NOT_FOUND_KEY;
+import static cab.aggregator.app.driverservice.utility.MessageKeys.RESOURCE_ALREADY_EXIST_KEY;
 
 @Service
 @RequiredArgsConstructor
@@ -145,7 +145,7 @@ public class DriverServiceImpl implements DriverService {
         List<UserRepresentation> users = usersResource.search(username, true);
 
         if (users == null || users.isEmpty()) {
-            throw  new EntityNotFoundException(messageSource.getMessage(ENTITY_NOT_FOUND_KEYCLOAK_MESSAGE,
+            throw  new EntityNotFoundException(messageSource.getMessage(ENTITY_NOT_FOUND_KEYCLOAK_KEY,
                     new Object[]{}, Locale.getDefault()));
         }
 
@@ -161,7 +161,7 @@ public class DriverServiceImpl implements DriverService {
 
         if (users == null || users.isEmpty()) {
             throw new EntityNotFoundException(messageSource.getMessage(
-                    ENTITY_NOT_FOUND_KEYCLOAK_MESSAGE,
+                    ENTITY_NOT_FOUND_KEYCLOAK_KEY,
                     new Object[]{email}, Locale.getDefault()));
         }
 
@@ -185,7 +185,7 @@ public class DriverServiceImpl implements DriverService {
 
         if (users == null || users.isEmpty()) {
             throw new EntityNotFoundException(messageSource.getMessage(
-                    ENTITY_NOT_FOUND_KEYCLOAK_MESSAGE,
+                    ENTITY_NOT_FOUND_KEYCLOAK_KEY,
                     new Object[]{email}, Locale.getDefault()));
         }
 
@@ -207,10 +207,13 @@ public class DriverServiceImpl implements DriverService {
             return;
         }
 
-        String userEmail = token.getToken().getClaims().get(EMAIL_CLAIM).toString();
+        String userEmail = token.getToken()
+                .getClaims()
+                .get(EMAIL_CLAIM)
+                .toString();
         if (!driver.getEmail().equals(userEmail)) {
             throw new AccessDeniedException(
-                    messageSource.getMessage(ACCESS_DENIED_MESSAGE,
+                    messageSource.getMessage(ACCESS_DENIED_KEY,
                             new Object[]{}, LocaleContextHolder.getLocale())
             );
         }
@@ -231,7 +234,7 @@ public class DriverServiceImpl implements DriverService {
 
         if (driverRepository.existsByEmail(driverRequestDto.email())) {
             throw new ResourceAlreadyExistsException(
-                    messageSource.getMessage(RESOURCE_ALREADY_EXIST_MESSAGE,
+                    messageSource.getMessage(RESOURCE_ALREADY_EXIST_KEY,
                             new Object[]{DRIVER, driverRequestDto.email()}, Locale.getDefault())
             );
         }
@@ -240,7 +243,7 @@ public class DriverServiceImpl implements DriverService {
 
     private void checkIfPhoneNumberUnique(DriverRequest driverRequestDto) {
         if (driverRepository.existsByPhoneNumber(driverRequestDto.phoneNumber())) {
-            throw new ResourceAlreadyExistsException(messageSource.getMessage(RESOURCE_ALREADY_EXIST_MESSAGE,
+            throw new ResourceAlreadyExistsException(messageSource.getMessage(RESOURCE_ALREADY_EXIST_KEY,
                     new Object[]{DRIVER, driverRequestDto.phoneNumber()}, Locale.getDefault()));
         }
     }
@@ -252,14 +255,14 @@ public class DriverServiceImpl implements DriverService {
 
     private Driver findDriverById(int driverId) {
         return driverRepository.findByIdAndDeletedFalse(driverId).orElseThrow(() ->
-                new EntityNotFoundException(messageSource.getMessage(ENTITY_NOT_FOUND_MESSAGE,
+                new EntityNotFoundException(messageSource.getMessage(ENTITY_NOT_FOUND_KEY,
                         new Object[]{DRIVER, driverId}, Locale.getDefault()))
         );
     }
 
     private Driver findDriverByIdForAdmin(int driverId) {
         return driverRepository.findById(driverId).orElseThrow(() ->
-                new EntityNotFoundException(messageSource.getMessage(ENTITY_NOT_FOUND_MESSAGE,
+                new EntityNotFoundException(messageSource.getMessage(ENTITY_NOT_FOUND_KEY,
                         new Object[]{DRIVER, driverId}, Locale.getDefault()))
         );
     }

@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import org.hibernate.validator.constraints.Length;
 
-import static cab.aggregator.app.driverservice.utility.Constants.CAR_NUMBER_PATTERN;
+import static cab.aggregator.app.driverservice.utility.RegExp.CAR_NUMBER_PATTERN;
 
 @Schema(description = "CarRequest DTO")
 public record CarRequest(

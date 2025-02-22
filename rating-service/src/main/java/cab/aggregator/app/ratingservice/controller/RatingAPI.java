@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 
-import static cab.aggregator.app.ratingservice.utility.Constants.REGEXP_ROLE;
+import static cab.aggregator.app.ratingservice.utility.RegExp.REGEXP_ROLE;
 
 @Tag(name = "Rating Controller")
 public interface RatingAPI {

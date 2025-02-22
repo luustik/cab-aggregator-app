@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 
-import static cab.aggregator.app.rideservice.utility.Constants.VALIDATION_STATUS_FAILED_MESSAGE;
+import static cab.aggregator.app.rideservice.utility.MessageKeys.VALIDATION_STATUS_FAILED_KEY;
+
 
 @Component
 @RequiredArgsConstructor
@@ -47,7 +48,7 @@ public class ValidationStatusService {
 
     private void throwExceptionValidStatus(Status substituteStatus) {
         throw new ImpossibleStatusException(messageSource
-                .getMessage(VALIDATION_STATUS_FAILED_MESSAGE,
+                .getMessage(VALIDATION_STATUS_FAILED_KEY,
                         new Object[]{substituteStatus},
                         Locale.getDefault()));
     }

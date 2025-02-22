@@ -14,7 +14,7 @@ public class DriverClientContainer {
     private final DriverClient driverClient;
 
     @CircuitBreaker(name = "driver-service-circuit-breaker")
-    public DriverResponse getById(int id, String authToken) {
-        return driverClient.getDriverById(id, authToken);
+    public DriverResponse getById(int id, String authorization) {
+        return driverClient.getDriverById(id, authorization);
     }
 }

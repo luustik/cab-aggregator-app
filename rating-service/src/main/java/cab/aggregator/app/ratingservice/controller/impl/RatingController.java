@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import static cab.aggregator.app.ratingservice.utility.Constants.REGEXP_ROLE;
+import static cab.aggregator.app.ratingservice.utility.RegExp.REGEXP_ROLE;
 
 @RestController
 @RequestMapping("/api/v1/ratings")

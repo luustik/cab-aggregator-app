@@ -23,8 +23,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cab.aggregator.app.ratingservice.utility.Constants.DEFAULT_EXCEPTION_MESSAGE;
-import static cab.aggregator.app.ratingservice.utility.Constants.VALIDATION_FAILED_MESSAGE;
+import static cab.aggregator.app.ratingservice.utility.MessageKeys.DEFAULT_EXCEPTION_KEY;
+import static cab.aggregator.app.ratingservice.utility.MessageKeys.VALIDATION_FAILED_KEY;
+
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -82,7 +83,7 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return MultiException.builder()
-                .message(messageSource.getMessage(VALIDATION_FAILED_MESSAGE, null, LocaleContextHolder.getLocale()))
+                .message(messageSource.getMessage(VALIDATION_FAILED_KEY, null, LocaleContextHolder.getLocale()))
                 .errors(errors)
                 .build();
     }
@@ -97,7 +98,7 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return MultiException.builder()
-                .message(messageSource.getMessage(VALIDATION_FAILED_MESSAGE, null, LocaleContextHolder.getLocale()))
+                .message(messageSource.getMessage(VALIDATION_FAILED_KEY, null, LocaleContextHolder.getLocale()))
                 .errors(errors)
                 .build();
     }
@@ -107,7 +108,7 @@ public class GlobalExceptionHandler {
     public ExceptionDto handleException(Exception e) {
         e.printStackTrace();
         return ExceptionDto.builder()
-                .message(messageSource.getMessage(DEFAULT_EXCEPTION_MESSAGE, null, LocaleContextHolder.getLocale()))
+                .message(messageSource.getMessage(DEFAULT_EXCEPTION_KEY, null, LocaleContextHolder.getLocale()))
                 .build();
     }
 }

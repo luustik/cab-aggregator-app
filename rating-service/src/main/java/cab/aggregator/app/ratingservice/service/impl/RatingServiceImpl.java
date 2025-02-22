@@ -29,7 +29,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static cab.aggregator.app.ratingservice.utility.Constants.*;
+import static cab.aggregator.app.ratingservice.utility.Constants.RATING;
+import static cab.aggregator.app.ratingservice.utility.Constants.RIDE;
+import static cab.aggregator.app.ratingservice.utility.KeycloakConstants.EMAIL_CLAIM;
+import static cab.aggregator.app.ratingservice.utility.KeycloakConstants.ROLE_ADMIN;
+import static cab.aggregator.app.ratingservice.utility.MessageKeys.ACCESS_DENIED_KEY;
+import static cab.aggregator.app.ratingservice.utility.MessageKeys.ENTITY_RESOURCE_NOT_FOUND_KEY;
+import static cab.aggregator.app.ratingservice.utility.MessageKeys.ENTITY_WITH_ID_NOT_FOUND_KEY;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +58,7 @@ public class RatingServiceImpl implements RatingService {
     @Override
     @Transactional(readOnly = true)
     public RatingResponse getRatingByRideIdAndRole(Long rideId, String role) {
-        validator.checkIfExistRide(rideId, getAuthToken());
+        validator.checkIfExistRide(rideId, getAuthorizationHeader());
         return ratingMapper
                 .toDto(findRatingByRideIdAndRole(rideId, role));
     }
@@ -69,7 +75,7 @@ public class RatingServiceImpl implements RatingService {
     @Override
     @Transactional(readOnly = true)
     public RatingContainerResponse getAllByUserIdAndRole(Long userId, String role, int offset, int limit) {
-        validator.checkIfExistUser(userId, UserRole.valueOf(role.toUpperCase()), getAuthToken());
+        validator.checkIfExistUser(userId, UserRole.valueOf(role.toUpperCase()), getAuthorizationHeader());
         return ratingContainerMapper
                 .toContainer(ratingRepository
                         .findAllByUserIdAndUserRole(userId, UserRole.valueOf(role.toUpperCase())
@@ -99,8 +105,8 @@ public class RatingServiceImpl implements RatingService {
     @Transactional
     public RatingResponse createRating(RatingRequest ratingRequest, JwtAuthenticationToken token) {
         Rating rating = ratingMapper.toEntity(ratingRequest);
-        validator.checkIfExistUser(rating.getUserId(), rating.getUserRole(), getAuthToken());
-        validator.checkIfExistRide(rating.getRideId(), getAuthToken());
+        validator.checkIfExistUser(rating.getUserId(), rating.getUserRole(), getAuthorizationHeader());
+        validator.checkIfExistRide(rating.getRideId(), getAuthorizationHeader());
         validator.checkIfExistRatingByRideIdAndRole(rating.getRideId(), rating.getUserRole());
         validateAccessOrThrow(rating, token);
         ratingRepository.save(rating);
@@ -125,7 +131,7 @@ public class RatingServiceImpl implements RatingService {
     @Transactional(readOnly = true)
     public AvgRatingUserResponse calculateRating(Long id, String userRole) {
         UserRole role = UserRole.valueOf(userRole.toUpperCase());
-        validator.checkIfExistUser(id, role, getAuthToken());
+        validator.checkIfExistUser(id, role, getAuthorizationHeader());
         AvgRatingUserResponse avgRatingUserResponse = calculateAvgRating(id, role);
         sendUserAvgRating(avgRatingUserResponse, role);
         return avgRatingUserResponse;
@@ -137,7 +143,10 @@ public class RatingServiceImpl implements RatingService {
             return;
         }
 
-        String userEmail = token.getToken().getClaims().get(EMAIL_CLAIM).toString();
+        String userEmail = token.getToken()
+                .getClaims()
+                .get(EMAIL_CLAIM)
+                .toString();
 
         RideResponse rideResponse = validator.getRideByRideId(rating.getRideId(), "Bearer " + token.getToken().getTokenValue());
 
@@ -164,13 +173,13 @@ public class RatingServiceImpl implements RatingService {
 
         if (!isEmailValid || !isUserPartOfRide) {
             throw new AccessDeniedException(
-                    messageSource.getMessage(ACCESS_DENIED_MESSAGE,
+                    messageSource.getMessage(ACCESS_DENIED_KEY,
                             new Object[]{}, LocaleContextHolder.getLocale())
             );
         }
     }
 
-    private String getAuthToken(){
+    private String getAuthorizationHeader() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         JwtAuthenticationToken token = (JwtAuthenticationToken) authentication;
         return "Bearer " + token.getToken().getTokenValue();
@@ -178,10 +187,6 @@ public class RatingServiceImpl implements RatingService {
 
     private AvgRatingUserResponse calculateAvgRating(Long id, UserRole userRole) {
         List<Rating> userRatings = ratingRepository.findAllByUserIdAndUserRole(id, userRole);
-//        if (userRatings.isEmpty()) {
-//            throw new EmptyListException(messageSource.getMessage(LIST_EMPTY_MESSAGE,
-//                    new Object[]{RATING}, LocaleContextHolder.getLocale()));
-//        }
         double avgRating = userRatings.stream()
                 .mapToInt(Rating::getRating)
                 .average()
@@ -199,13 +204,13 @@ public class RatingServiceImpl implements RatingService {
 
     private Rating findRatingById(Long id) {
         return ratingRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage(ENTITY_WITH_ID_NOT_FOUND_MESSAGE,
+                .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage(ENTITY_WITH_ID_NOT_FOUND_KEY,
                         new Object[]{RATING, id}, LocaleContextHolder.getLocale())));
     }
 
     private Rating findRatingByRideIdAndRole(Long rideId, String role) {
         return ratingRepository.findByRideIdAndUserRole(rideId, UserRole.valueOf(role.toUpperCase()))
-                .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage(ENTITY_RESOURCE_NOT_FOUND_MESSAGE,
+                .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage(ENTITY_RESOURCE_NOT_FOUND_KEY,
                         new Object[]{role, RATING, RIDE, rideId}, LocaleContextHolder.getLocale())));
     }
 

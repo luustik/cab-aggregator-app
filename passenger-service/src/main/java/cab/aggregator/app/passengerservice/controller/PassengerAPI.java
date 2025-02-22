@@ -16,8 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 
-import static cab.aggregator.app.passengerservice.utility.Constants.EMAIL_PATTERN;
-import static cab.aggregator.app.passengerservice.utility.Constants.PHONE_NUMBER_PATTERN;
+import static cab.aggregator.app.passengerservice.utility.RegExp.EMAIL_PATTERN;
+import static cab.aggregator.app.passengerservice.utility.RegExp.PHONE_NUMBER_PATTERN;
 
 @Tag(name = "Passenger Controller")
 public interface PassengerAPI {

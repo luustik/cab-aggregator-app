@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import static cab.aggregator.app.driverservice.utility.Constants.GENDER_PATTERN;
+import static cab.aggregator.app.driverservice.utility.RegExp.GENDER_PATTERN;
 
 @RestController
 @RequestMapping("/api/v1/drivers")

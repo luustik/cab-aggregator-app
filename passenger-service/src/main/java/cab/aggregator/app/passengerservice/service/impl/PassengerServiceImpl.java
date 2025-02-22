@@ -29,14 +29,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Locale;
 
-import static cab.aggregator.app.passengerservice.utility.Constants.ACCESS_DENIED_MESSAGE;
-import static cab.aggregator.app.passengerservice.utility.Constants.EMAIL_CLAIM;
-import static cab.aggregator.app.passengerservice.utility.Constants.ENTITY_NOT_FOUND_KEYCLOAK_MESSAGE;
 import static cab.aggregator.app.passengerservice.utility.Constants.PASSENGER;
-import static cab.aggregator.app.passengerservice.utility.Constants.RESOURCE_ALREADY_EXIST_MESSAGE;
-import static cab.aggregator.app.passengerservice.utility.Constants.ENTITY_WITH_ID_NOT_FOUND_MESSAGE;
-import static cab.aggregator.app.passengerservice.utility.Constants.ENTITY_WITH_RESOURCE_NOT_FOUND_MESSAGE;
-import static cab.aggregator.app.passengerservice.utility.Constants.ROLE_ADMIN;
+import static cab.aggregator.app.passengerservice.utility.KeycloakConstants.EMAIL_CLAIM;
+import static cab.aggregator.app.passengerservice.utility.KeycloakConstants.ROLE_ADMIN;
+import static cab.aggregator.app.passengerservice.utility.MessageKeys.ACCESS_DENIED_KEY;
+import static cab.aggregator.app.passengerservice.utility.MessageKeys.ENTITY_NOT_FOUND_KEYCLOAK_KEY;
+import static cab.aggregator.app.passengerservice.utility.MessageKeys.ENTITY_WITH_ID_NOT_FOUND_KEY;
+import static cab.aggregator.app.passengerservice.utility.MessageKeys.ENTITY_WITH_RESOURCE_NOT_FOUND_KEY;
+import static cab.aggregator.app.passengerservice.utility.MessageKeys.RESOURCE_ALREADY_EXIST_KEY;
 
 @Service
 @RequiredArgsConstructor
@@ -148,7 +148,7 @@ public class PassengerServiceImpl implements PassengerService {
 
         if (users == null || users.isEmpty()) {
             throw new EntityNotFoundException(messageSource.getMessage(
-                    ENTITY_NOT_FOUND_KEYCLOAK_MESSAGE,
+                    ENTITY_NOT_FOUND_KEYCLOAK_KEY,
                     new Object[]{email}, Locale.getDefault()));
         }
 
@@ -169,7 +169,7 @@ public class PassengerServiceImpl implements PassengerService {
         List<UserRepresentation> users = usersResource.search(username, true);
 
         if (users == null || users.isEmpty()) {
-            throw  new EntityNotFoundException(messageSource.getMessage(ENTITY_NOT_FOUND_KEYCLOAK_MESSAGE,
+            throw  new EntityNotFoundException(messageSource.getMessage(ENTITY_NOT_FOUND_KEYCLOAK_KEY,
                     new Object[]{}, Locale.getDefault()));
         }
 
@@ -185,7 +185,7 @@ public class PassengerServiceImpl implements PassengerService {
 
         if (users == null || users.isEmpty()) {
             throw new EntityNotFoundException(messageSource.getMessage(
-                    ENTITY_NOT_FOUND_KEYCLOAK_MESSAGE,
+                    ENTITY_NOT_FOUND_KEYCLOAK_KEY,
                     new Object[]{email}, Locale.getDefault()));
         }
 
@@ -205,10 +205,13 @@ public class PassengerServiceImpl implements PassengerService {
             return;
         }
 
-        String userEmail = token.getToken().getClaims().get(EMAIL_CLAIM).toString();
+        String userEmail = token.getToken()
+                .getClaims()
+                .get(EMAIL_CLAIM)
+                .toString();
         if (!passenger.getEmail().equals(userEmail)) {
             throw new AccessDeniedException(
-                    messageSource.getMessage(ACCESS_DENIED_MESSAGE,
+                    messageSource.getMessage(ACCESS_DENIED_KEY,
                             new Object[]{}, LocaleContextHolder.getLocale())
             );
         }
@@ -229,41 +232,41 @@ public class PassengerServiceImpl implements PassengerService {
 
     private void checkIfEmailUnique(PassengerRequest passengerRequestDto) {
         if (passengerRepository.existsByEmail(passengerRequestDto.email())) {
-            throw new ResourceAlreadyExistsException(messageSource.getMessage(RESOURCE_ALREADY_EXIST_MESSAGE, new Object[]{PASSENGER, passengerRequestDto.email()}, Locale.getDefault()));
+            throw new ResourceAlreadyExistsException(messageSource.getMessage(RESOURCE_ALREADY_EXIST_KEY, new Object[]{PASSENGER, passengerRequestDto.email()}, Locale.getDefault()));
         }
     }
 
     private void checkIfPhoneUnique(PassengerRequest passengerRequestDto) {
         if (passengerRepository.existsByPhone(passengerRequestDto.phone())) {
-            throw new ResourceAlreadyExistsException(messageSource.getMessage(RESOURCE_ALREADY_EXIST_MESSAGE, new Object[]{PASSENGER, passengerRequestDto.phone()}, Locale.getDefault()));
+            throw new ResourceAlreadyExistsException(messageSource.getMessage(RESOURCE_ALREADY_EXIST_KEY, new Object[]{PASSENGER, passengerRequestDto.phone()}, Locale.getDefault()));
         }
     }
 
     private Passenger findPassengerById(int id) {
         return passengerRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(
-                        () -> new EntityNotFoundException(messageSource.getMessage(ENTITY_WITH_ID_NOT_FOUND_MESSAGE, new Object[]{PASSENGER, id}, Locale.getDefault()))
+                        () -> new EntityNotFoundException(messageSource.getMessage(ENTITY_WITH_ID_NOT_FOUND_KEY, new Object[]{PASSENGER, id}, Locale.getDefault()))
                 );
     }
 
     private Passenger findPassengerByIdForAdmin(int id) {
         return passengerRepository.findById(id)
                 .orElseThrow(
-                        () -> new EntityNotFoundException(messageSource.getMessage(ENTITY_WITH_ID_NOT_FOUND_MESSAGE, new Object[]{PASSENGER, id}, Locale.getDefault()))
+                        () -> new EntityNotFoundException(messageSource.getMessage(ENTITY_WITH_ID_NOT_FOUND_KEY, new Object[]{PASSENGER, id}, Locale.getDefault()))
                 );
     }
 
     private Passenger findPassengerByPhone(String phone) {
         return passengerRepository.findByPhoneAndDeletedFalse(phone)
                 .orElseThrow(
-                        () -> new EntityNotFoundException(messageSource.getMessage(ENTITY_WITH_RESOURCE_NOT_FOUND_MESSAGE, new Object[]{PASSENGER, phone}, Locale.getDefault()))
+                        () -> new EntityNotFoundException(messageSource.getMessage(ENTITY_WITH_RESOURCE_NOT_FOUND_KEY, new Object[]{PASSENGER, phone}, Locale.getDefault()))
                 );
     }
 
     private Passenger findPassengerByEmail(String email) {
         return passengerRepository.findByEmailAndDeletedFalse(email)
                 .orElseThrow(
-                        () -> new EntityNotFoundException(messageSource.getMessage(ENTITY_WITH_RESOURCE_NOT_FOUND_MESSAGE, new Object[]{PASSENGER, email}, Locale.getDefault()))
+                        () -> new EntityNotFoundException(messageSource.getMessage(ENTITY_WITH_RESOURCE_NOT_FOUND_KEY, new Object[]{PASSENGER, email}, Locale.getDefault()))
                 );
     }
 }

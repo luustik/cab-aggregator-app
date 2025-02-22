@@ -8,7 +8,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
-import static cab.aggregator.app.authservice.util.Constants.*;
+import static cab.aggregator.app.authservice.util.RegExp.EMAIL_PATTERN;
+import static cab.aggregator.app.authservice.util.RegExp.GENDER_PATTERN;
+import static cab.aggregator.app.authservice.util.RegExp.PHONE_NUMBER_PATTERN;
+import static cab.aggregator.app.authservice.util.RegExp.ROLE_PATTERN;
 
 @Schema(description = "SignUp DTO")
 public record SignUpDto(

@@ -10,12 +10,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static cab.aggregator.app.rideservice.utility.Constants.AZP_CLAIM;
-import static cab.aggregator.app.rideservice.utility.Constants.AZP_CLAIM_VALUE;
-import static cab.aggregator.app.rideservice.utility.Constants.REALM_ACCESS_CLAIM;
-import static cab.aggregator.app.rideservice.utility.Constants.REALM_ACCESS_CLAIM_VALUE;
-import static cab.aggregator.app.rideservice.utility.Constants.ROLE_ADMIN;
-import static cab.aggregator.app.rideservice.utility.Constants.ROLE_PREFIX;
+import static cab.aggregator.app.rideservice.utility.KeycloakConstants.AZP_CLAIM;
+import static cab.aggregator.app.rideservice.utility.KeycloakConstants.AZP_CLAIM_VALUE;
+import static cab.aggregator.app.rideservice.utility.KeycloakConstants.REALM_ACCESS_CLAIM;
+import static cab.aggregator.app.rideservice.utility.KeycloakConstants.REALM_ACCESS_CLAIM_VALUE;
+import static cab.aggregator.app.rideservice.utility.KeycloakConstants.ROLE_ADMIN;
+import static cab.aggregator.app.rideservice.utility.KeycloakConstants.ROLE_PREFIX;
 
 public class KeycloakJwtTokenConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
 
@@ -27,8 +27,8 @@ public class KeycloakJwtTokenConverter implements Converter<Jwt, Collection<Gran
         var realmAccessMap = jwt.getClaimAsMap(REALM_ACCESS_CLAIM);
         Object rolesObject = realmAccessMap.get(REALM_ACCESS_CLAIM_VALUE);
 
-        if (rolesObject instanceof List<?>) {
-            List<String> realmAccess = ((List<?>) rolesObject).stream()
+        if (rolesObject instanceof List<?> tmpRoles) {
+            List<String> realmAccess = tmpRoles.stream()
                     .filter(String.class::isInstance)
                     .map(String.class::cast)
                     .toList();

@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 
-import static cab.aggregator.app.driverservice.utility.Constants.GENDER_PATTERN;
+import static cab.aggregator.app.driverservice.utility.RegExp.GENDER_PATTERN;
 
 @Tag(name = "Driver controller")
 public interface DriverAPI {

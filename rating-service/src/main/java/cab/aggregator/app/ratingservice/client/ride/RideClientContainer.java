@@ -14,7 +14,7 @@ public class RideClientContainer {
     private final RideClient rideClient;
 
     @CircuitBreaker(name = "ride-service-circuit-breaker")
-    public RideResponse getById(long id, String authToken) {
-        return rideClient.getRideById(id, authToken);
+    public RideResponse getById(long id, String authorization) {
+        return rideClient.getRideById(id, authorization);
     }
 }

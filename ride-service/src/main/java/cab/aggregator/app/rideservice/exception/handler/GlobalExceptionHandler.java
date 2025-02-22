@@ -22,8 +22,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static cab.aggregator.app.rideservice.utility.Constants.DEFAULT_EXCEPTION_MESSAGE;
-import static cab.aggregator.app.rideservice.utility.Constants.VALIDATION_FAILED_MESSAGE;
+import static cab.aggregator.app.rideservice.utility.MessageKeys.DEFAULT_EXCEPTION_KEY;
+import static cab.aggregator.app.rideservice.utility.MessageKeys.VALIDATION_FAILED_KEY;
+
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -81,7 +82,7 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return MultiException.builder()
-                .message(messageSource.getMessage(VALIDATION_FAILED_MESSAGE, null, Locale.getDefault()))
+                .message(messageSource.getMessage(VALIDATION_FAILED_KEY, null, Locale.getDefault()))
                 .errors(errors)
                 .build();
     }
@@ -96,7 +97,7 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return MultiException.builder()
-                .message(messageSource.getMessage(VALIDATION_FAILED_MESSAGE, null, Locale.getDefault()))
+                .message(messageSource.getMessage(VALIDATION_FAILED_KEY, null, Locale.getDefault()))
                 .errors(errors)
                 .build();
     }
@@ -105,7 +106,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ExceptionDto handleException(Exception e) {
         return ExceptionDto.builder()
-                .message(DEFAULT_EXCEPTION_MESSAGE)
+                .message(DEFAULT_EXCEPTION_KEY)
                 .build();
     }
 }

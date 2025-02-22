@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
-import static cab.aggregator.app.authservice.util.Constants.EMAIL_PATTERN;
+import static cab.aggregator.app.authservice.util.RegExp.EMAIL_PATTERN;
 
 public record SignInDto(
         @Schema(description = "User email", example = "nvienjnb@knsb.com")

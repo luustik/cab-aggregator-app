@@ -15,8 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 
-import static cab.aggregator.app.rideservice.utility.Constants.REGEXP_DATE_TIME;
-import static cab.aggregator.app.rideservice.utility.Constants.REGEXP_STATUS;
+import static cab.aggregator.app.rideservice.utility.RegExp.REGEXP_DATE_TIME;
+import static cab.aggregator.app.rideservice.utility.RegExp.REGEXP_STATUS;
 
 @Tag(name = "Ride Controller")
 public interface RideController {

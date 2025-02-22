@@ -413,9 +413,6 @@ services:
       - pg_keycloak:/var/lib/postgresql/data
     ports:
       - "5435:5432"
-    depends_on:
-      kibana:
-        condition: service_healthy
     networks:
       - cab-aggregator-app
     healthcheck:
