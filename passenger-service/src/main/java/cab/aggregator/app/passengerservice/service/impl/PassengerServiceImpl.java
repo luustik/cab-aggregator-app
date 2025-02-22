@@ -232,7 +232,11 @@ public class PassengerServiceImpl implements PassengerService {
 
     private void checkIfEmailUnique(PassengerRequest passengerRequestDto) {
         if (passengerRepository.existsByEmail(passengerRequestDto.email())) {
-            throw new ResourceAlreadyExistsException(messageSource.getMessage(RESOURCE_ALREADY_EXIST_KEY, new Object[]{PASSENGER, passengerRequestDto.email()}, Locale.getDefault()));
+            throw new ResourceAlreadyExistsException(
+                    messageSource.getMessage(
+                            RESOURCE_ALREADY_EXIST_KEY,
+                            new Object[]{PASSENGER, passengerRequestDto.email()},
+                            Locale.getDefault()));
         }
     }
 

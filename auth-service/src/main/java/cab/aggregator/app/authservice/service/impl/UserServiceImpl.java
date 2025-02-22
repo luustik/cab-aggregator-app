@@ -81,7 +81,11 @@ public class UserServiceImpl implements UserService {
         UsersResource usersResource = realmResource.users();
         String adminClientAccessToken = keycloak.tokenManager().getAccessTokenString();
         Response response = Optional.ofNullable(usersResource.create(keycloakUser))
-                .orElseThrow(() -> new ServiceUnavailableException(messageSource.getMessage(SERVICE_UNAVAILABLE_KEY, new Object[]{}, LocaleContextHolder.getLocale())));
+                .orElseThrow(() -> new ServiceUnavailableException(
+                        messageSource.getMessage(
+                                SERVICE_UNAVAILABLE_KEY,
+                                new Object[]{},
+                                LocaleContextHolder.getLocale())));
         if (response.getStatus() == HttpStatus.CREATED.value()) {
             try {
                 switch (signUpDto.role()) {
