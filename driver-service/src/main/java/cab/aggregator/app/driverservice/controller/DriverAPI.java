@@ -1,6 +1,7 @@
 package cab.aggregator.app.driverservice.controller;
 
 import cab.aggregator.app.driverservice.dto.request.DriverRequest;
+import cab.aggregator.app.driverservice.dto.request.PasswordRequest;
 import cab.aggregator.app.driverservice.dto.response.DriverContainerResponse;
 import cab.aggregator.app.driverservice.dto.response.DriverResponse;
 import cab.aggregator.app.driverservice.dto.validation.OnCreate;
@@ -12,9 +13,10 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 
-import static cab.aggregator.app.driverservice.utility.Constants.GENDER_PATTERN;
+import static cab.aggregator.app.driverservice.utility.RegExp.GENDER_PATTERN;
 
 @Tag(name = "Driver controller")
 public interface DriverAPI {
@@ -36,7 +38,7 @@ public interface DriverAPI {
                                                   @Min(1) @Max(100) int limit);
 
     @Operation(summary = "Safe delete driver by Id")
-    void safeDeleteDriverById(int id);
+    void safeDeleteDriverById(int id, JwtAuthenticationToken jwtAuthenticationToken);
 
     @Operation(summary = "Hard delete driver by Id")
     void deleteDriverById(int id);
@@ -45,5 +47,8 @@ public interface DriverAPI {
     ResponseEntity<DriverResponse> createDriver(@Valid @Validated(OnCreate.class) DriverRequest request);
 
     @Operation(summary = "Update driver by Id")
-    DriverResponse updateDriver(int id, @Valid @Validated(OnUpdate.class) DriverRequest request);
+    DriverResponse updateDriver(int id, @Valid @Validated(OnUpdate.class) DriverRequest request, JwtAuthenticationToken jwtAuthenticationToken);
+
+    @Operation(summary = "Update driver password by id")
+    void updatePassword(int id, @Valid @Validated(OnUpdate.class) PasswordRequest request, JwtAuthenticationToken jwtAuthenticationToken);
 }

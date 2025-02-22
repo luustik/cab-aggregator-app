@@ -12,6 +12,8 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,21 +62,26 @@ public class CarController implements CarAPI {
 
     @Override
     @DeleteMapping("/{id}")
-    public void deleteCarById(@PathVariable int id) {
-        carService.deleteCar(id);
+    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER')")
+    public void deleteCarById(@PathVariable int id, JwtAuthenticationToken jwtAuthenticationToken) {
+        carService.deleteCar(id, jwtAuthenticationToken);
     }
 
     @Override
     @PostMapping
-    public ResponseEntity<CarResponse> createCar(@Valid @Validated(OnCreate.class) @RequestBody CarRequest request) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER')")
+    public ResponseEntity<CarResponse> createCar(@Valid @Validated(OnCreate.class) @RequestBody CarRequest request,
+                                                 JwtAuthenticationToken jwtAuthenticationToken) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(carService.createCar(request));
+                .body(carService.createCar(request, jwtAuthenticationToken));
     }
 
     @Override
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER')")
     public CarResponse updateCar(@PathVariable int id,
-                                 @Valid @Validated(OnUpdate.class) @RequestBody CarRequest request) {
-        return carService.updateCar(id, request);
+                                 @Valid @Validated(OnUpdate.class) @RequestBody CarRequest request,
+                                 JwtAuthenticationToken jwtAuthenticationToken) {
+        return carService.updateCar(id, request, jwtAuthenticationToken);
     }
 }

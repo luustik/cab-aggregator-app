@@ -2,6 +2,7 @@ package cab.aggregator.app.rideservice.exception.handler;
 
 import cab.aggregator.app.rideservice.dto.exception.ExceptionDto;
 import cab.aggregator.app.rideservice.dto.exception.MultiException;
+import cab.aggregator.app.rideservice.exception.AccessDeniedException;
 import cab.aggregator.app.rideservice.exception.ExternalClientException;
 import cab.aggregator.app.rideservice.exception.EntityNotFoundException;
 import cab.aggregator.app.rideservice.exception.ImpossibleStatusException;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,14 +22,23 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static cab.aggregator.app.rideservice.utility.Constants.DEFAULT_EXCEPTION_MESSAGE;
-import static cab.aggregator.app.rideservice.utility.Constants.VALIDATION_FAILED_MESSAGE;
+import static cab.aggregator.app.rideservice.utility.MessageKeys.DEFAULT_EXCEPTION_KEY;
+import static cab.aggregator.app.rideservice.utility.MessageKeys.VALIDATION_FAILED_KEY;
+
 
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
     private final MessageSource messageSource;
+
+    @ExceptionHandler({AccessDeniedException.class, AuthorizationDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ExceptionDto handleAccessDenied(RuntimeException e) {
+        return ExceptionDto.builder()
+                .message(e.getMessage())
+                .build();
+    }
 
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -71,7 +82,7 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return MultiException.builder()
-                .message(messageSource.getMessage(VALIDATION_FAILED_MESSAGE, null, Locale.getDefault()))
+                .message(messageSource.getMessage(VALIDATION_FAILED_KEY, null, Locale.getDefault()))
                 .errors(errors)
                 .build();
     }
@@ -86,7 +97,7 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return MultiException.builder()
-                .message(messageSource.getMessage(VALIDATION_FAILED_MESSAGE, null, Locale.getDefault()))
+                .message(messageSource.getMessage(VALIDATION_FAILED_KEY, null, Locale.getDefault()))
                 .errors(errors)
                 .build();
     }
@@ -95,7 +106,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ExceptionDto handleException(Exception e) {
         return ExceptionDto.builder()
-                .message(DEFAULT_EXCEPTION_MESSAGE)
+                .message(DEFAULT_EXCEPTION_KEY)
                 .build();
     }
 }

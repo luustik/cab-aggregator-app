@@ -16,6 +16,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,7 +30,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import static cab.aggregator.app.ratingservice.utility.Constants.REGEXP_ROLE;
+import static cab.aggregator.app.ratingservice.utility.RegExp.REGEXP_ROLE;
 
 @RestController
 @RequestMapping("/api/v1/ratings")
@@ -78,18 +80,21 @@ public class RatingController implements RatingAPI {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteRatingById(@PathVariable Long id) {
         ratingService.deleteRating(id);
     }
 
     @PostMapping
-    public ResponseEntity<RatingResponse> createRating(@Valid @Validated(OnCreate.class) @RequestBody RatingRequest request) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER', 'PASSENGER')")
+    public ResponseEntity<RatingResponse> createRating(@Valid @Validated(OnCreate.class) @RequestBody RatingRequest request, JwtAuthenticationToken token) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ratingService
-                        .createRating(request));
+                        .createRating(request, token));
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public RatingResponse updateRating(@PathVariable Long id,
                                        @Valid @Validated(OnUpdate.class)
                                        @RequestBody RatingUpdateDto ratingUpdateDto) {

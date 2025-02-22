@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 import static cab.aggregator.app.passengerservice.kafka.util.Constants.CONTAINER_FACTORY;
 import static cab.aggregator.app.passengerservice.kafka.util.Constants.GROUP_PASSENGER;
 import static cab.aggregator.app.passengerservice.kafka.util.Constants.PASSENGER_TOPIC;
-import static cab.aggregator.app.passengerservice.utility.Constants.ENTITY_WITH_ID_NOT_FOUND_MESSAGE;
 import static cab.aggregator.app.passengerservice.utility.Constants.PASSENGER;
+import static cab.aggregator.app.passengerservice.utility.MessageKeys.ENTITY_WITH_ID_NOT_FOUND_KEY;
 
 
 @Service
@@ -37,7 +37,7 @@ public class KafkaListenerService {
     private Passenger findPassengerById(int id) {
         return passengerRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(
-                        () -> new EntityNotFoundException(messageSource.getMessage(ENTITY_WITH_ID_NOT_FOUND_MESSAGE,
+                        () -> new EntityNotFoundException(messageSource.getMessage(ENTITY_WITH_ID_NOT_FOUND_KEY,
                                 new Object[]{PASSENGER, id}, LocaleContextHolder.getLocale())));
     }
 }

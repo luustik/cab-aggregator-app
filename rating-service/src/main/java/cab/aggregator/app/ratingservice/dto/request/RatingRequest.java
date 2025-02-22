@@ -9,7 +9,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
-import static cab.aggregator.app.ratingservice.utility.Constants.REGEXP_ROLE;
+import static cab.aggregator.app.ratingservice.utility.RegExp.REGEXP_ROLE;
+
 
 @Schema(description = "Rating Request DTO")
 public record RatingRequest(

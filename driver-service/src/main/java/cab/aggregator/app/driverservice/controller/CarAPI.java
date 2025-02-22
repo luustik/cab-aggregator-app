@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 
 @Tag(name = "Car controller")
@@ -31,11 +32,11 @@ public interface CarAPI {
                                               @Min(1) @Max(100) int limit);
 
     @Operation(summary = "Delete car by id")
-    void deleteCarById(int id);
+    void deleteCarById(int id, JwtAuthenticationToken jwtAuthenticationToken);
 
     @Operation(summary = "Create new car")
-    ResponseEntity<CarResponse> createCar(@Valid @Validated(OnCreate.class) CarRequest request);
+    ResponseEntity<CarResponse> createCar(@Valid @Validated(OnCreate.class) CarRequest request, JwtAuthenticationToken jwtAuthenticationToken);
 
     @Operation(summary = "Update car by id")
-    CarResponse updateCar(int id, @Valid @Validated(OnUpdate.class) CarRequest request);
+    CarResponse updateCar(int id, @Valid @Validated(OnUpdate.class) CarRequest request, JwtAuthenticationToken jwtAuthenticationToken);
 }

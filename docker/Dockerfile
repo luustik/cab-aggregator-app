@@ -5,7 +5,7 @@ ARG SERVICE_NAME
 COPY ${SERVICE_NAME}/pom.xml pom.xml
 COPY ${SERVICE_NAME}/src src
 
-RUN mvn clean package -DskipTests
+RUN mvn clean package -Dmaven.test.skip=true
 
 FROM eclipse-temurin:17-jre AS builder
 

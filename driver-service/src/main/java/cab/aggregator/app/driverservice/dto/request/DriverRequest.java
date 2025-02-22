@@ -7,9 +7,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
-import static cab.aggregator.app.driverservice.utility.Constants.EMAIL_PATTERN;
-import static cab.aggregator.app.driverservice.utility.Constants.PHONE_NUMBER_PATTERN;
-import static cab.aggregator.app.driverservice.utility.Constants.GENDER_PATTERN;
+import static cab.aggregator.app.driverservice.utility.RegExp.EMAIL_PATTERN;
+import static cab.aggregator.app.driverservice.utility.RegExp.GENDER_PATTERN;
+import static cab.aggregator.app.driverservice.utility.RegExp.PHONE_NUMBER_PATTERN;
 
 @Schema(description = "DriverRequest DTO")
 public record DriverRequest(

@@ -3,6 +3,7 @@ package cab.aggregator.app.driverservice.service;
 import cab.aggregator.app.driverservice.dto.request.CarRequest;
 import cab.aggregator.app.driverservice.dto.response.CarContainerResponse;
 import cab.aggregator.app.driverservice.dto.response.CarResponse;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 public interface CarService {
 
@@ -14,10 +15,10 @@ public interface CarService {
 
     CarContainerResponse getAllCarsByDriverId(int driverId, int offset, int limit);
 
-    CarResponse createCar(CarRequest carRequestDto);
+    CarResponse createCar(CarRequest carRequestDto, JwtAuthenticationToken token);
 
-    CarResponse updateCar(int carId, CarRequest carRequestDto);
+    CarResponse updateCar(int carId, CarRequest carRequestDto, JwtAuthenticationToken token);
 
-    void deleteCar(int carId);
+    void deleteCar(int carId, JwtAuthenticationToken token);
 
 }

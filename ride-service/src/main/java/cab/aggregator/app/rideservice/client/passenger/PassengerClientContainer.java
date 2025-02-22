@@ -14,8 +14,8 @@ public class PassengerClientContainer {
     private final PassengerClient passengerClient;
 
     @CircuitBreaker(name = "passenger-service-circuit-breaker")
-    public PassengerResponse getById(int id) {
-        return passengerClient.getPassengerById(id);
+    public PassengerResponse getById(int id, String authorization) {
+        return passengerClient.getPassengerById(id, authorization);
     }
 }
 

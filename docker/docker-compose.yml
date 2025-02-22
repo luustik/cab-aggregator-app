@@ -3,6 +3,7 @@ volumes:
   pg_driver:
   pg_rating:
   pg_ride:
+  pg_keycloak:
   kafka_data:
   zookeeper_data:
   elastic_data:
@@ -20,7 +21,7 @@ services:
     ports:
       - "8761:8761"
     environment:
-      - ZIPKIN=http://zipkin:9411/api/v2/spans
+      - ZIPKIN=${ZIPKIN}
     networks:
       - cab-aggregator-app
     depends_on:
@@ -35,6 +36,8 @@ services:
       kafka:
         condition: service_healthy
       zipkin:
+        condition: service_healthy
+      keycloak:
         condition: service_healthy
     healthcheck:
       test: [ "CMD-SHELL", "curl --fail http://discovery-service:8761/actuator/health" ]
@@ -51,11 +54,11 @@ services:
       dockerfile: docker/Dockerfile
       args:
         SERVICE_NAME: config-server
-    ports:
+    expose:
       - "8000:8000"
     environment:
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
-      - ZIPKIN=http://zipkin:9411/api/v2/spans
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_URL}
+      - ZIPKIN=${ZIPKIN}
     depends_on:
       discovery-service:
         condition: service_healthy
@@ -66,7 +69,41 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-      start_period: 15s
+      start_period: 25s
+
+  auth-service:
+    image: auth-service:latest
+    container_name: auth-service
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+      args:
+        SERVICE_NAME: auth-service
+    expose:
+      - "8085:8085"
+    environment:
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - KEYCLOAK_ADMIN_CLIENT_URL=${KEYCLOAK_ADMIN_CLIENT_URL}
+      - CLIENT_ID_FOR_AUTH_KC=${CLIENT_ID_FOR_AUTH_KC}
+      - KC_REALM=${KC_REALM}
+      - EUREKA_URL=${EUREKA_URL}
+    depends_on:
+      driver-service:
+        condition: service_healthy
+      passenger-service:
+        condition: service_healthy
+      rating-service:
+        condition: service_healthy
+      ride-service:
+        condition: service_healthy
+    networks:
+      - cab-aggregator-app
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://auth-service:8085/actuator/health" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   driver-service:
     image: driver-service:latest
@@ -76,15 +113,20 @@ services:
       dockerfile: docker/Dockerfile
       args:
         SERVICE_NAME: driver-service
-    ports:
+    expose:
       - "8082:8082"
     environment:
-      - DB_URL=jdbc:postgresql://driver_db:5432/driver_db
-      - DB_USERNAME=user
-      - DB_PASSWORD=pass
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
-      - KAFKA=kafka:29092
-      - ZIPKIN=http://zipkin:9411/api/v2/spans
+      - DB_URL=${DRIVER_DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_URL}
+      - KAFKA=${KAFKA}
+      - ZIPKIN=${ZIPKIN}
+      - JWT_ISSUER_URL=${JWT_ISSUER_URL}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - KEYCLOAK_ADMIN_CLIENT_URL=${KEYCLOAK_ADMIN_CLIENT_URL}
+      - CLIENT_ID_FOR_AUTH_KC=${CLIENT_ID_FOR_AUTH_KC}
+      - KC_REALM=${KC_REALM}
     depends_on:
       config-server:
         condition: service_healthy
@@ -105,15 +147,20 @@ services:
       dockerfile: docker/Dockerfile
       args:
         SERVICE_NAME: passenger-service
-    ports:
+    expose:
       - "8081:8081"
     environment:
-      - DB_URL=jdbc:postgresql://passenger_db:5432/passenger_db
-      - DB_USERNAME=user
-      - DB_PASSWORD=pass
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
-      - KAFKA=kafka:29092
-      - ZIPKIN=http://zipkin:9411/api/v2/spans
+      - DB_URL=${PASSENGER_DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_URL}
+      - KAFKA=${KAFKA}
+      - ZIPKIN=${ZIPKIN}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - KEYCLOAK_ADMIN_CLIENT_URL=${KEYCLOAK_ADMIN_CLIENT_URL}
+      - CLIENT_ID_FOR_AUTH_KC=${CLIENT_ID_FOR_AUTH_KC}
+      - KC_REALM=${KC_REALM}
+      - JWT_ISSUER_URL=${JWT_ISSUER_URL}
     depends_on:
       config-server:
         condition: service_healthy
@@ -134,15 +181,16 @@ services:
       dockerfile: docker/Dockerfile
       args:
         SERVICE_NAME: rating-service
-    ports:
+    expose:
       - "8084:8084"
     environment:
-      - DB_URL=jdbc:postgresql://rating_db:5432/rating_db
-      - DB_USERNAME=user
-      - DB_PASSWORD=pass
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
-      - KAFKA=kafka:29092
-      - ZIPKIN=http://zipkin:9411/api/v2/spans
+      - DB_URL=${RATING_DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_URL}
+      - KAFKA=${KAFKA}
+      - ZIPKIN=${ZIPKIN}
+      - JWT_ISSUER_URL=${JWT_ISSUER_URL}
     depends_on:
       config-server:
         condition: service_healthy
@@ -163,14 +211,15 @@ services:
       dockerfile: docker/Dockerfile
       args:
         SERVICE_NAME: ride-service
-    ports:
+    expose:
       - "8083:8083"
     environment:
-      - DB_URL=jdbc:postgresql://ride_db:5432/ride_db
-      - DB_USERNAME=user
-      - DB_PASSWORD=pass
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
-      - ZIPKIN=http://zipkin:9411/api/v2/spans
+      - DB_URL=${RIDE_DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_URL}
+      - ZIPKIN=${ZIPKIN}
+      - JWT_ISSUER_URL=${JWT_ISSUER_URL}
     depends_on:
       config-server:
         condition: service_healthy
@@ -194,8 +243,8 @@ services:
     ports:
       - "8888:8888"
     environment:
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
-      - ZIPKIN=http://zipkin:9411/api/v2/spans
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_URL}
+      - ZIPKIN=${ZIPKIN}
     depends_on:
       driver-service:
         condition: service_healthy
@@ -204,6 +253,8 @@ services:
       rating-service:
         condition: service_healthy
       ride-service:
+        condition: service_healthy
+      auth-service:
         condition: service_healthy
     networks:
       - cab-aggregator-app
@@ -261,10 +312,10 @@ services:
 
   passenger_db:
     image: postgres:15.1-alpine
-    container_name: passenger
+    container_name: passenger-db
     environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=passenger_db
     volumes:
       - pg_passenger:/var/lib/postgresql/data
@@ -284,10 +335,10 @@ services:
 
   driver_db:
     image: postgres:15.1-alpine
-    container_name: driver
+    container_name: driver-db
     environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=driver_db
     volumes:
       - pg_driver:/var/lib/postgresql/data
@@ -307,10 +358,10 @@ services:
 
   ride_db:
     image: postgres:15.1-alpine
-    container_name: ride
+    container_name: ride-db
     environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=ride_db
     volumes:
       - pg_ride:/var/lib/postgresql/data
@@ -330,10 +381,10 @@ services:
 
   rating_db:
     image: postgres:15.1-alpine
-    container_name: rating
+    container_name: rating-db
     environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=rating_db
     volumes:
       - pg_rating:/var/lib/postgresql/data
@@ -351,6 +402,53 @@ services:
       retries: 5
       start_period: 5s
 
+  keycloak_db:
+    image: postgres:15.1-alpine
+    container_name: keycloak-db
+    environment:
+      POSTGRES_DB: keycloak_db
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pg_keycloak:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    networks:
+      - cab-aggregator-app
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user -d keycloak_db" ]
+      interval: 1s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.1
+    container_name: keycloak
+    command: [ "start-dev", "--http-port=7000", "--import-realm", "--health-enabled=true" ]
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: ${KEYCLOAK_DB_URL}
+      KC_DB_USERNAME: ${DB_USERNAME}
+      KC_DB_PASSWORD: ${DB_PASSWORD}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    volumes:
+      - ./keycloak/realms:/opt/keycloak/data/import
+    ports:
+      - "7000:7000"
+    depends_on:
+      keycloak_db:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "exec 3<>/dev/tcp/localhost/7000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+    networks:
+      - cab-aggregator-app
+
   elasticsearch:
     image: elasticsearch:7.14.0
     container_name: elasticsearch
@@ -363,6 +461,7 @@ services:
       - xpack.security.enabled=false
       - xpack.monitoring.enabled=false
       - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9200/_cluster/health" ]
       interval: 5s
@@ -419,7 +518,7 @@ services:
     ports:
       - "5601:5601"
     environment:
-      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_URL: ${ELASTICSEARCH_URL}
     depends_on:
       filebeat:
         condition: service_healthy
@@ -440,8 +539,8 @@ services:
     volumes:
       - ./monitoring/grafana:/var/lib/grafana
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
     depends_on:
       prometheus:
         condition: service_healthy
@@ -490,3 +589,4 @@ services:
 
 networks:
   cab-aggregator-app:
+    driver: bridge

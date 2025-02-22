@@ -1,6 +1,7 @@
 package cab.aggregator.app.passengerservice.controller;
 
 import cab.aggregator.app.passengerservice.dto.request.PassengerRequest;
+import cab.aggregator.app.passengerservice.dto.request.PasswordRequest;
 import cab.aggregator.app.passengerservice.dto.response.PassengerContainerResponse;
 import cab.aggregator.app.passengerservice.dto.response.PassengerResponse;
 import cab.aggregator.app.passengerservice.dto.validation.OnCreate;
@@ -12,10 +13,11 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 
-import static cab.aggregator.app.passengerservice.utility.Constants.EMAIL_PATTERN;
-import static cab.aggregator.app.passengerservice.utility.Constants.PHONE_NUMBER_PATTERN;
+import static cab.aggregator.app.passengerservice.utility.RegExp.EMAIL_PATTERN;
+import static cab.aggregator.app.passengerservice.utility.RegExp.PHONE_NUMBER_PATTERN;
 
 @Tag(name = "Passenger Controller")
 public interface PassengerAPI {
@@ -38,7 +40,7 @@ public interface PassengerAPI {
     PassengerResponse getPassengerByEmail(@Valid @Validated @Pattern(regexp = EMAIL_PATTERN, message = "{passengerEmail.pattern}") String email);
 
     @Operation(summary = "Soft delete passenger")
-    void softDeleteDriverById(int id);
+    void softDeleteDriverById(int id, JwtAuthenticationToken jwtAuthenticationToken);
 
     @Operation(summary = "Hard delete passenger")
     void hardDeleteDriverById(int id);
@@ -47,5 +49,8 @@ public interface PassengerAPI {
     ResponseEntity<PassengerResponse> createDriver(@Valid @Validated(OnCreate.class) PassengerRequest request);
 
     @Operation(summary = "Update passenger by Id")
-    PassengerResponse updateDriver(int id, @Valid @Validated(OnUpdate.class) PassengerRequest request);
+    PassengerResponse updateDriver(int id, @Valid @Validated(OnUpdate.class) PassengerRequest request, JwtAuthenticationToken jwtAuthenticationToken);
+
+    @Operation(summary = "Update driver password by id")
+    void updatePassword(int id, @Valid @Validated(OnUpdate.class) PasswordRequest request, JwtAuthenticationToken jwtAuthenticationToken);
 }

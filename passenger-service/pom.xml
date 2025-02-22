@@ -32,6 +32,7 @@
         <springdoc.version>2.5.0</springdoc.version>
         <spring-cloud.version>2023.0.3</spring-cloud.version>
         <cucumber.version>7.11.0</cucumber.version>
+        <keycloak.version>26.0.0</keycloak.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -175,6 +176,23 @@
         <dependency>
             <groupId>io.zipkin.reporter2</groupId>
             <artifactId>zipkin-reporter-brave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-jose</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>${keycloak.version}</version>
         </dependency>
     </dependencies>
 
