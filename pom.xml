@@ -11,6 +11,14 @@
   <url>http://maven.apache.org</url>
   <modules>
     <module>exception-handler-starter</module>
+    <module>auth-service</module>
+    <module>config-server</module>
+    <module>discovery-service</module>
+    <module>driver-service</module>
+    <module>gateway-service</module>
+    <module>passenger-service</module>
+    <module>rating-service</module>
+    <module>ride-service</module>
   </modules>
 
   <properties>
