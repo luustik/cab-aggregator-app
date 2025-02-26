@@ -1,6 +1,6 @@
 package cab.aggregator.app.authservice.client;
 
-import cab.aggregator.app.authservice.exception.ExternalClientException;
+import cab.aggregator.app.exception.common.ExternalClientException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;

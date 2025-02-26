@@ -1,5 +1,7 @@
 package cab.aggregator.app.ratingservice.service.impl;
 
+import cab.aggregator.app.exception.common.AccessDeniedException;
+import cab.aggregator.app.exception.common.EntityNotFoundException;
 import cab.aggregator.app.ratingservice.dto.client.DriverResponse;
 import cab.aggregator.app.ratingservice.dto.client.PassengerResponse;
 import cab.aggregator.app.ratingservice.dto.client.RideResponse;
@@ -10,8 +12,6 @@ import cab.aggregator.app.ratingservice.dto.response.RatingContainerResponse;
 import cab.aggregator.app.ratingservice.dto.response.RatingResponse;
 import cab.aggregator.app.ratingservice.entity.Rating;
 import cab.aggregator.app.ratingservice.entity.enums.UserRole;
-import cab.aggregator.app.ratingservice.exception.AccessDeniedException;
-import cab.aggregator.app.ratingservice.exception.EntityNotFoundException;
 import cab.aggregator.app.ratingservice.kafka.KafkaSender;
 import cab.aggregator.app.ratingservice.mapper.RatingContainerMapper;
 import cab.aggregator.app.ratingservice.mapper.RatingMapper;

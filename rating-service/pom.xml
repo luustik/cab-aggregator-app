@@ -35,6 +35,7 @@
         <liquibase.password>${env.DB_PASSWORD}</liquibase.password>
         <spring-cloud.version>2023.0.3</spring-cloud.version>
         <cucumber.version>7.11.0</cucumber.version>
+        <exception.handler.version>1.0-SNAPSHOT</exception.handler.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -202,6 +203,11 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-jose</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cab.aggregator.app</groupId>
+            <artifactId>exception-handler-starter</artifactId>
+            <version>${exception.handler.version}</version>
         </dependency>
     </dependencies>
 

@@ -1,6 +1,6 @@
 package cab.aggregator.app.rideservice.client;
 
-import cab.aggregator.app.rideservice.exception.ExternalClientException;
+import cab.aggregator.app.exception.common.ExternalClientException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
