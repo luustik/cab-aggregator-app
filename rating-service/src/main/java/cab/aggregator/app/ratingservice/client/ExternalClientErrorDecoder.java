@@ -1,6 +1,6 @@
 package cab.aggregator.app.ratingservice.client;
 
-import cab.aggregator.app.ratingservice.exception.ExternalClientException;
+import cab.aggregator.app.exception.common.ExternalClientException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;

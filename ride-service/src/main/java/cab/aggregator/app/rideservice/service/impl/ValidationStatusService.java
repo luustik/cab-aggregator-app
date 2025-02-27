@@ -1,7 +1,7 @@
 package cab.aggregator.app.rideservice.service.impl;
 
+import cab.aggregator.app.exception.rideservice.ImpossibleStatusException;
 import cab.aggregator.app.rideservice.entity.enums.Status;
-import cab.aggregator.app.rideservice.exception.ImpossibleStatusException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;

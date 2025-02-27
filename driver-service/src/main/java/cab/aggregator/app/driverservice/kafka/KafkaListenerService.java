@@ -2,8 +2,8 @@ package cab.aggregator.app.driverservice.kafka;
 
 import cab.aggregator.app.driverservice.dto.kafka.AvgRatingResponse;
 import cab.aggregator.app.driverservice.entity.Driver;
-import cab.aggregator.app.driverservice.exception.EntityNotFoundException;
 import cab.aggregator.app.driverservice.repository.DriverRepository;
+import cab.aggregator.app.exception.common.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;

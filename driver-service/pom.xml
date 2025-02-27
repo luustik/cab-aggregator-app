@@ -33,6 +33,7 @@
         <spring-cloud.version>2023.0.3</spring-cloud.version>
         <cucumber.version>7.11.0</cucumber.version>
         <keycloak.version>26.0.0</keycloak.version>
+        <exception.handler.version>1.0-SNAPSHOT</exception.handler.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -185,6 +186,11 @@
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-admin-client</artifactId>
             <version>${keycloak.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cab.aggregator.app</groupId>
+            <artifactId>exception-handler-starter</artifactId>
+            <version>${exception.handler.version}</version>
         </dependency>
     </dependencies>
 

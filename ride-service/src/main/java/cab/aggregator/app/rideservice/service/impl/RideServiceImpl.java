@@ -1,5 +1,7 @@
 package cab.aggregator.app.rideservice.service.impl;
 
+import cab.aggregator.app.exception.common.AccessDeniedException;
+import cab.aggregator.app.exception.common.EntityNotFoundException;
 import cab.aggregator.app.rideservice.dto.client.DriverResponse;
 import cab.aggregator.app.rideservice.dto.client.PassengerResponse;
 import cab.aggregator.app.rideservice.dto.request.RideRequest;
@@ -7,8 +9,6 @@ import cab.aggregator.app.rideservice.dto.response.RideContainerResponse;
 import cab.aggregator.app.rideservice.dto.response.RideResponse;
 import cab.aggregator.app.rideservice.entity.Ride;
 import cab.aggregator.app.rideservice.entity.enums.Status;
-import cab.aggregator.app.rideservice.exception.AccessDeniedException;
-import cab.aggregator.app.rideservice.exception.EntityNotFoundException;
 import cab.aggregator.app.rideservice.mapper.RideContainerMapper;
 import cab.aggregator.app.rideservice.mapper.RideMapper;
 import cab.aggregator.app.rideservice.repository.RideRepository;

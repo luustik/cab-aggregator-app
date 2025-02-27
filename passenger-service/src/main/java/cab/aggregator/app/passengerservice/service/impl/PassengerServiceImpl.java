@@ -1,14 +1,14 @@
 package cab.aggregator.app.passengerservice.service.impl;
 
+import cab.aggregator.app.exception.common.AccessDeniedException;
+import cab.aggregator.app.exception.common.EntityNotFoundException;
+import cab.aggregator.app.exception.common.ResourceAlreadyExistsException;
 import cab.aggregator.app.passengerservice.config.KeycloakProperties;
 import cab.aggregator.app.passengerservice.dto.request.PassengerRequest;
 import cab.aggregator.app.passengerservice.dto.request.PasswordRequest;
 import cab.aggregator.app.passengerservice.dto.response.PassengerContainerResponse;
 import cab.aggregator.app.passengerservice.dto.response.PassengerResponse;
 import cab.aggregator.app.passengerservice.entity.Passenger;
-import cab.aggregator.app.passengerservice.exception.AccessDeniedException;
-import cab.aggregator.app.passengerservice.exception.EntityNotFoundException;
-import cab.aggregator.app.passengerservice.exception.ResourceAlreadyExistsException;
 import cab.aggregator.app.passengerservice.mapper.PassengerContainerMapper;
 import cab.aggregator.app.passengerservice.mapper.PassengerMapper;
 import cab.aggregator.app.passengerservice.repository.PassengerRepository;

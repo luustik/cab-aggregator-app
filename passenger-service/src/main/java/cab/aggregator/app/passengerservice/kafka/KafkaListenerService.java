@@ -1,8 +1,8 @@
 package cab.aggregator.app.passengerservice.kafka;
 
+import cab.aggregator.app.exception.common.EntityNotFoundException;
 import cab.aggregator.app.passengerservice.dto.kafka.AvgRatingResponse;
 import cab.aggregator.app.passengerservice.entity.Passenger;
-import cab.aggregator.app.passengerservice.exception.EntityNotFoundException;
 import cab.aggregator.app.passengerservice.repository.PassengerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
