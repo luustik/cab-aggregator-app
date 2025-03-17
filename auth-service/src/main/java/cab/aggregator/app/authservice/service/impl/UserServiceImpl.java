@@ -6,6 +6,7 @@ import cab.aggregator.app.authservice.config.KeycloakProperties;
 import cab.aggregator.app.authservice.dto.request.RefreshTokenDto;
 import cab.aggregator.app.authservice.dto.request.SignInDto;
 import cab.aggregator.app.authservice.dto.request.SignUpDto;
+import cab.aggregator.app.authservice.dto.response.UserResponse;
 import cab.aggregator.app.authservice.dto.response.UserResponseTokenDto;
 import cab.aggregator.app.authservice.service.UserService;
 import cab.aggregator.app.exception.authservice.CreateUserException;
@@ -75,7 +76,7 @@ public class UserServiceImpl implements UserService {
     private final DriverClientContainer driverClientContainer;
 
     @Override
-    public void signUp(SignUpDto signUpDto) {
+    public UserResponse signUp(SignUpDto signUpDto) {
         UserRepresentation keycloakUser = getUserRepresentation(signUpDto);
         RealmResource realmResource = keycloak.realm(keycloakProperties.getRealm());
         UsersResource usersResource = realmResource.users();
@@ -86,13 +87,14 @@ public class UserServiceImpl implements UserService {
                                 SERVICE_UNAVAILABLE_KEY,
                                 new Object[]{},
                                 LocaleContextHolder.getLocale())));
+        UserResponse userResponse = null;
         if (response.getStatus() == HttpStatus.CREATED.value()) {
             try {
                 switch (signUpDto.role()) {
                     case PASSENGER_ROLE ->
-                            passengerClientContainer.createPassenger(signUpDto, AUTH_TOKEN + adminClientAccessToken);
+                            userResponse = passengerClientContainer.createPassenger(signUpDto, AUTH_TOKEN + adminClientAccessToken);
                     case DRIVER_ROLE ->
-                            driverClientContainer.createDriver(signUpDto, AUTH_TOKEN + adminClientAccessToken);
+                            userResponse = driverClientContainer.createDriver(signUpDto, AUTH_TOKEN + adminClientAccessToken);
                 }
             } catch (Exception exception) {
                 usersResource.delete(CreatedResponseUtil.getCreatedId(response));
@@ -108,6 +110,7 @@ public class UserServiceImpl implements UserService {
         userById.roles()
                 .realmLevel()
                 .add(List.of(role));
+        return userResponse;
     }
 
     @Override

@@ -12,5 +12,5 @@ public record PassengerResponse(
         boolean deleted,
 
         double avgGrade
-) {
+) implements UserResponse{
 }
