@@ -39,6 +39,8 @@ services:
         condition: service_healthy
       keycloak:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD-SHELL", "curl --fail http://discovery-service:8761/actuator/health" ]
       interval: 1s
@@ -127,6 +129,8 @@ services:
       - KEYCLOAK_ADMIN_CLIENT_URL=${KEYCLOAK_ADMIN_CLIENT_URL}
       - CLIENT_ID_FOR_AUTH_KC=${CLIENT_ID_FOR_AUTH_KC}
       - KC_REALM=${KC_REALM}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_URL=${REDIS_URL}
     depends_on:
       config-server:
         condition: service_healthy
@@ -161,6 +165,8 @@ services:
       - CLIENT_ID_FOR_AUTH_KC=${CLIENT_ID_FOR_AUTH_KC}
       - KC_REALM=${KC_REALM}
       - JWT_ISSUER_URL=${JWT_ISSUER_URL}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_URL=${REDIS_URL}
     depends_on:
       config-server:
         condition: service_healthy
@@ -191,6 +197,8 @@ services:
       - KAFKA=${KAFKA}
       - ZIPKIN=${ZIPKIN}
       - JWT_ISSUER_URL=${JWT_ISSUER_URL}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_URL=${REDIS_URL}
     depends_on:
       config-server:
         condition: service_healthy
@@ -220,6 +228,8 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_URL}
       - ZIPKIN=${ZIPKIN}
       - JWT_ISSUER_URL=${JWT_ISSUER_URL}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_URL=${REDIS_URL}
     depends_on:
       config-server:
         condition: service_healthy
@@ -586,6 +596,19 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
+
+  redis:
+    image: redis:7.4.2
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - cab-aggregator-app
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   cab-aggregator-app:

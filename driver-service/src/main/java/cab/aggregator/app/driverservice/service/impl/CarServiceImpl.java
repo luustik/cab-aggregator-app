@@ -14,6 +14,9 @@ import cab.aggregator.app.exception.common.AccessDeniedException;
 import cab.aggregator.app.exception.common.EntityNotFoundException;
 import cab.aggregator.app.exception.common.ResourceAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 
+import static cab.aggregator.app.driverservice.utility.CacheConstants.CAR_CACHE;
 import static cab.aggregator.app.driverservice.utility.Constants.CAR;
 import static cab.aggregator.app.driverservice.utility.Constants.DRIVER;
 import static cab.aggregator.app.driverservice.utility.KeycloakConstants.EMAIL_CLAIM;
@@ -43,6 +47,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = CAR_CACHE, key = "#carId")
     public CarResponse getCarById(int carId) {
         return carMapper.toDto(findCarById(carId));
     }
@@ -57,6 +62,7 @@ public class CarServiceImpl implements CarService {
 
     @Transactional(readOnly = true)
     @Override
+    @Cacheable(value = CAR_CACHE, key = "#result.id()")
     public CarResponse getCarByCarNumber(String carNumber) {
         return carMapper.toDto(findCarByCarNumber(carNumber));
     }
@@ -71,6 +77,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     @Transactional
+    @CachePut(value = CAR_CACHE, key = "#result.id()")
     public CarResponse createCar(CarRequest carRequestDto, JwtAuthenticationToken token) {
         checkIfCarUnique(carRequestDto);
         Car car = carMapper.toEntity(carRequestDto);
@@ -81,6 +88,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     @Transactional
+    @CachePut(value = CAR_CACHE, key = "#carId")
     public CarResponse updateCar(int carId, CarRequest carRequestDto, JwtAuthenticationToken token) {
         Car car = findCarById(carId);
         if (!car.getCarNumber().equals(carRequestDto.carNumber())) {
@@ -95,6 +103,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     @Transactional
+    @CacheEvict(value = CAR_CACHE, key = "#carId")
     public void deleteCar(int carId, JwtAuthenticationToken token) {
         Car car = findCarById(carId);
         validateCarAccessOrThrow(car, token);

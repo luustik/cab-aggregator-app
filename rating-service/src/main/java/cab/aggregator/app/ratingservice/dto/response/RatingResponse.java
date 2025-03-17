@@ -1,5 +1,7 @@
 package cab.aggregator.app.ratingservice.dto.response;
 
+import java.io.Serializable;
+
 public record RatingResponse(
 
         Long id,
@@ -13,5 +15,5 @@ public record RatingResponse(
         String comment,
 
         String userRole
-) {
+) implements Serializable {
 }
