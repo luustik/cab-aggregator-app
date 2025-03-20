@@ -18,6 +18,9 @@ import cab.aggregator.app.ratingservice.mapper.RatingMapper;
 import cab.aggregator.app.ratingservice.repository.RatingRepository;
 import cab.aggregator.app.ratingservice.service.RatingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static cab.aggregator.app.ratingservice.utility.CacheConstants.RATING_CACHE;
 import static cab.aggregator.app.ratingservice.utility.Constants.RATING;
 import static cab.aggregator.app.ratingservice.utility.Constants.RIDE;
 import static cab.aggregator.app.ratingservice.utility.KeycloakConstants.EMAIL_CLAIM;
@@ -50,6 +54,7 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = RATING_CACHE, key = "#id")
     public RatingResponse getRatingById(Long id) {
         return ratingMapper
                 .toDto(findRatingById(id));
@@ -57,6 +62,7 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = RATING_CACHE, key = "#result.id()")
     public RatingResponse getRatingByRideIdAndRole(Long rideId, String role) {
         validator.checkIfExistRide(rideId, getAuthorizationHeader());
         return ratingMapper
@@ -94,6 +100,7 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional
+    @CacheEvict(value = RATING_CACHE, key = "#id")
     public void deleteRating(Long id) {
         Rating rating = findRatingById(id);
         ratingRepository.delete(rating);
@@ -103,6 +110,7 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional
+    @CachePut(value = RATING_CACHE, key = "#result.id()")
     public RatingResponse createRating(RatingRequest ratingRequest, JwtAuthenticationToken token) {
         Rating rating = ratingMapper.toEntity(ratingRequest);
         validator.checkIfExistUser(rating.getUserId(), rating.getUserRole(), getAuthorizationHeader());
@@ -117,6 +125,7 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional
+    @CachePut(value = RATING_CACHE, key = "#id")
     public RatingResponse updateRating(Long id, RatingUpdateDto ratingUpdateDto) {
         Rating rating = findRatingById(id);
         rating.setRating(ratingUpdateDto.rating());

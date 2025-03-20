@@ -19,6 +19,9 @@ import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Locale;
 
+import static cab.aggregator.app.passengerservice.utility.CacheConstants.PASSENGER_CACHE;
 import static cab.aggregator.app.passengerservice.utility.Constants.PASSENGER;
 import static cab.aggregator.app.passengerservice.utility.KeycloakConstants.EMAIL_CLAIM;
 import static cab.aggregator.app.passengerservice.utility.KeycloakConstants.ROLE_ADMIN;
@@ -51,6 +55,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = PASSENGER_CACHE, key = "#id")
     public PassengerResponse getPassengerById(int id) {
         return passengerMapper.toDto(findPassengerById(id));
     }
@@ -73,18 +78,21 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = PASSENGER_CACHE, key = "#result.id()")
     public PassengerResponse getPassengerByPhone(String email) {
         return passengerMapper.toDto(findPassengerByPhone(email));
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = PASSENGER_CACHE, key = "#result.id()")
     public PassengerResponse getPassengerByEmail(String email) {
         return passengerMapper.toDto(findPassengerByEmail(email));
     }
 
     @Override
     @Transactional
+    @CacheEvict(value = PASSENGER_CACHE, key = "#id")
     public void softDeletePassenger(int id, JwtAuthenticationToken token) {
         Passenger passenger = findPassengerById(id);
         validateAccessOrThrow(passenger, token);
@@ -94,6 +102,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     @Transactional
+    @CacheEvict(value = PASSENGER_CACHE, key = "#id")
     public void hardDeletePassenger(int id) {
         Passenger passenger = findPassengerByIdForAdmin(id);
         deleteUserFromKeycloakByUsername(passenger.getEmail());
@@ -102,6 +111,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     @Transactional
+    @CachePut(value = PASSENGER_CACHE, key = "#result.id()")
     public PassengerResponse createPassenger(PassengerRequest passengerRequestDto) {
         Passenger passenger = checkIfPassengerDelete(passengerRequestDto);
         if (passenger != null) {
@@ -117,6 +127,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     @Transactional
+    @CachePut(value = PASSENGER_CACHE, key = "#id")
     public PassengerResponse updatePassenger(int id, PassengerRequest passengerRequestDto, JwtAuthenticationToken token) {
         Passenger passenger = findPassengerById(id);
         String email = passenger.getEmail();

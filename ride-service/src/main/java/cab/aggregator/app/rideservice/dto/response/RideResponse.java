@@ -1,5 +1,6 @@
 package cab.aggregator.app.rideservice.dto.response;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -20,5 +21,5 @@ public record RideResponse(
         LocalDateTime orderDateTime,
 
         BigDecimal cost
-) {
+) implements Serializable {
 }

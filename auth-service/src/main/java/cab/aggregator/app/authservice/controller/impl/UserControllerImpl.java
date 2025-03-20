@@ -4,6 +4,7 @@ import cab.aggregator.app.authservice.controller.UserController;
 import cab.aggregator.app.authservice.dto.request.RefreshTokenDto;
 import cab.aggregator.app.authservice.dto.request.SignInDto;
 import cab.aggregator.app.authservice.dto.request.SignUpDto;
+import cab.aggregator.app.authservice.dto.response.UserResponse;
 import cab.aggregator.app.authservice.dto.response.UserResponseTokenDto;
 import cab.aggregator.app.authservice.service.UserService;
 import jakarta.validation.Valid;
@@ -31,8 +32,8 @@ public class UserControllerImpl implements UserController {
     @Override
     @PostMapping("/sign-up")
     @ResponseStatus(HttpStatus.CREATED)
-    public void signUp(@Valid @RequestBody SignUpDto signUpDto) {
-        userService.signUp(signUpDto);
+    public UserResponse signUp(@Valid @RequestBody SignUpDto signUpDto) {
+        return userService.signUp(signUpDto);
     }
 
     @Override

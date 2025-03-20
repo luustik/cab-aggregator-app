@@ -1,5 +1,7 @@
 package cab.aggregator.app.driverservice.dto.response;
 
+import java.io.Serializable;
+
 public record DriverResponse(
 
         int id,
@@ -15,5 +17,5 @@ public record DriverResponse(
         boolean deleted,
 
         double avgGrade
-) {
+) implements Serializable {
 }

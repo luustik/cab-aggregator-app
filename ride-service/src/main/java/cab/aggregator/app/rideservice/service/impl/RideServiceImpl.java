@@ -15,6 +15,9 @@ import cab.aggregator.app.rideservice.repository.RideRepository;
 import cab.aggregator.app.rideservice.service.RideService;
 import cab.aggregator.app.rideservice.utility.Utilities;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
+import static cab.aggregator.app.rideservice.utility.CacheConstants.RIDE_CACHE;
 import static cab.aggregator.app.rideservice.utility.KeycloakConstants.EMAIL_CLAIM;
 import static cab.aggregator.app.rideservice.utility.KeycloakConstants.ROLE_ADMIN;
 import static cab.aggregator.app.rideservice.utility.MessageKeys.ACCESS_DENIED_KEY;
@@ -47,6 +51,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = RIDE_CACHE, key = "#rideId")
     public RideResponse getRideById(Long rideId) {
         return rideMapper.toDto(findById(rideId));
     }
@@ -101,6 +106,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     @Transactional
+    @CacheEvict(value = RIDE_CACHE, key = "#id")
     public void deleteRide(Long id) {
         Ride ride = findById(id);
         rideRepository.delete(ride);
@@ -108,6 +114,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     @Transactional
+    @CachePut(value = RIDE_CACHE, key = "#id")
     public RideResponse updateRideStatus(Long id, String status, JwtAuthenticationToken token) {
         Ride ride = findById(id);
         validateAccessOrThrow(ride, token);
@@ -120,6 +127,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     @Transactional
+    @CachePut(value = RIDE_CACHE, key = "#result.id()")
     public RideResponse createRide(RideRequest rideRequest, JwtAuthenticationToken token) {
         Ride ride = rideMapper.toEntity(rideRequest);
         validator.checkIfExistDriver(ride.getDriverId(), getAuthorizationHeader());

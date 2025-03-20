@@ -34,6 +34,7 @@
         <cucumber.version>7.11.0</cucumber.version>
         <keycloak.version>26.0.0</keycloak.version>
         <exception.handler.version>1.0-SNAPSHOT</exception.handler.version>
+        <logging.version>1.0-SNAPSHOT</logging.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -191,6 +192,15 @@
             <groupId>cab.aggregator.app</groupId>
             <artifactId>exception-handler-starter</artifactId>
             <version>${exception.handler.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cab.aggregator.app</groupId>
+            <artifactId>logging-starter</artifactId>
+            <version>${logging.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
     </dependencies>
 

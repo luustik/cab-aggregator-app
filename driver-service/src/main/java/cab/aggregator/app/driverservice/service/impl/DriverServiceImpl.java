@@ -20,6 +20,9 @@ import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static cab.aggregator.app.driverservice.utility.CacheConstants.DRIVER_CACHE;
 import static cab.aggregator.app.driverservice.utility.Constants.DRIVER;
 import static cab.aggregator.app.driverservice.utility.KeycloakConstants.EMAIL_CLAIM;
 import static cab.aggregator.app.driverservice.utility.KeycloakConstants.GENDER_FIELD;
@@ -54,6 +58,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = DRIVER_CACHE, key = "#driverId")
     public DriverResponse getDriverById(int driverId) {
         return driverMapper.toDto(findDriverById(driverId));
     }
@@ -84,6 +89,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
+    @CacheEvict(value = DRIVER_CACHE, key = "#driverId")
     public void safeDeleteDriver(int driverId, JwtAuthenticationToken token) {
         Driver driver = findDriverById(driverId);
         validateAccessOrThrow(driver, token);
@@ -93,6 +99,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
+    @CacheEvict(value = DRIVER_CACHE, key = "#driverId")
     public void deleteDriver(int driverId) {
         Driver driver = findDriverByIdForAdmin(driverId);
         deleteUserFromKeycloakByUsername(driver.getEmail());
@@ -101,6 +108,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
+    @CachePut(value = DRIVER_CACHE, key = "#result.id()")
     public DriverResponse createDriver(DriverRequest driverRequestDto) {
         Driver driver = checkIfDriverDelete(driverRequestDto);
         if (driver != null) {
@@ -116,6 +124,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
+    @CachePut(value = DRIVER_CACHE, key = "#id")
     public DriverResponse updateDriver(int id, DriverRequest driverRequestDto, JwtAuthenticationToken token) {
         Driver driver = findDriverById(id);
         String email = driver.getEmail();

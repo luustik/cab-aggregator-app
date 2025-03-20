@@ -32,6 +32,7 @@
         <spring-cloud.version>2023.0.3</spring-cloud.version>
         <keycloak.version>26.0.0</keycloak.version>
         <exception.handler.version>1.0-SNAPSHOT</exception.handler.version>
+        <logging.version>1.0-SNAPSHOT</logging.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -80,6 +81,10 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
@@ -106,6 +111,11 @@
             <groupId>cab.aggregator.app</groupId>
             <artifactId>exception-handler-starter</artifactId>
             <version>${exception.handler.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cab.aggregator.app</groupId>
+            <artifactId>logging-starter</artifactId>
+            <version>${logging.version}</version>
         </dependency>
     </dependencies>
 

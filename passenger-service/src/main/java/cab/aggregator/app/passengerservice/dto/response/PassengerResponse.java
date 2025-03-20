@@ -1,5 +1,7 @@
 package cab.aggregator.app.passengerservice.dto.response;
 
+import java.io.Serializable;
+
 public record PassengerResponse(
         int id,
 
@@ -12,5 +14,5 @@ public record PassengerResponse(
         boolean deleted,
 
         double avgGrade
-) {
+) implements Serializable {
 }
