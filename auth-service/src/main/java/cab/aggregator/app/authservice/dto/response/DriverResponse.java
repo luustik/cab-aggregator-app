@@ -15,5 +15,5 @@ public record DriverResponse(
         boolean deleted,
 
         double avgGrade
-) implements UserResponse{
+) implements UserResponse {
 }
