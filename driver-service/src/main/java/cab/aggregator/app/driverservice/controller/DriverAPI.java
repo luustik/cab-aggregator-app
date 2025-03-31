@@ -20,7 +20,7 @@ import static cab.aggregator.app.driverservice.utility.RegExp.GENDER_PATTERN;
 
 @Tag(name = "Driver controller")
 public interface DriverAPI {
-    @Operation(summary = "Get driver dy Id")
+    @Operation(summary = "Get driver by Id")
     DriverResponse getDriverById(int id);
 
     @Operation(summary = "Get all drivers for Admin")
@@ -37,7 +37,7 @@ public interface DriverAPI {
                                                   @Min(0) int offset,
                                                   @Min(1) @Max(100) int limit);
 
-    @Operation(summary = "Safe delete driver by Id")
+    @Operation(summary = "Soft delete driver by Id")
     void safeDeleteDriverById(int id, JwtAuthenticationToken jwtAuthenticationToken);
 
     @Operation(summary = "Hard delete driver by Id")
