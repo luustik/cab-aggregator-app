@@ -1,0 +1,1352 @@
+{
+	"info": {
+		"_postman_id": "e1caafbd-760e-40da-9763-4328ad70cfc6",
+		"name": "cab-aggregator-app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38778898"
+	},
+	"item": [
+		{
+			"name": "passenger-service",
+			"item": [
+				{
+					"name": "Get passenger by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/passengers/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"passengers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all passengers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/passengers",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"passengers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all passengers for admin",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/passengers/admin",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"passengers",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hard delete passenger",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/passengers/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"passengers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Soft delete passenger",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/passengers/soft/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"passengers",
+								"soft",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new passenger",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"passenger\",\r\n  \"email\": \"passenger@example.com\",\r\n  \"phone\": \"+375(25)1111111\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/passengers",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"passengers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update passenger by id",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"passenger1\",\r\n  \"email\": \"passenger@example.com\",\r\n  \"phone\": \"+375(25)1111111\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/passengers/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"passengers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get passenger by phone",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/passengers/phone/+375(25)1111111",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"passengers",
+								"phone",
+								"+375(25)1111111"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get passenger by email",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/passengers/email/passenger@example.com",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"passengers",
+								"email",
+								"passenger@example.com"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "driver-service",
+			"item": [
+				{
+					"name": "driver controller",
+					"item": [
+						{
+							"name": "Get driver by Id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/drivers/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"drivers",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all drivers for admin",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/drivers/admin",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"drivers",
+										"admin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all drivers by gender",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/drivers/driver-by-gender/MALE",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"drivers",
+										"driver-by-gender",
+										"MALE"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Hard delete driver",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/drivers/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"drivers",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Safe delete driver",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/drivers/safe/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"drivers",
+										"safe",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create driver",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"driver\",\r\n    \"email\": \"driver@example.com\",\r\n    \"phoneNumber\": \"+375(25)1111111\",\r\n    \"gender\": \"MALE\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/drivers",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"drivers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update driver by Id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"driver1\",\r\n    \"email\": \"driver@example.com\",\r\n    \"phoneNumber\": \"+375(25)1111111\",\r\n    \"gender\": \"MALE\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/drivers/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"drivers",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all drivers",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/drivers",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"drivers"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "car controller",
+					"item": [
+						{
+							"name": "Get car by id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/cars/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"cars",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all cars",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/cars",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"cars"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all cars by driver id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/cars/cars-driver/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"cars",
+										"cars-driver",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get car by car number",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/cars/car-by-number/7930AB-7",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"cars",
+										"car-by-number",
+										"7930AB-7"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete car by id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/cars/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"cars",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create new car",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"model\": \"audi\",\r\n  \"carNumber\": \"7654AB-1\",\r\n  \"color\": \"pink\",\r\n  \"driverId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/cars",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"cars"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update car by id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"model\": \"audi\",\r\n  \"carNumber\": \"7654AB-1\",\r\n  \"color\": \"yellow\",\r\n  \"driverId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/cars/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"cars",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "ride-service",
+			"item": [
+				{
+					"name": "Get ride by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/rides/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"rides",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all rides",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/rides",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"rides"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all rides by status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/rides/status/COMPLETED",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"rides",
+								"status",
+								"COMPLETED"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all rides by passenger id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/rides/passenger-id/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"rides",
+								"passenger-id",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all rides by driver id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/rides/driver-id/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"rides",
+								"driver-id",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all rides between date time",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/rides/ride-between-date-time/?start=2023-01-01 00:00&end=2024-10-30 00:00",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"rides",
+								"ride-between-date-time",
+								""
+							],
+							"query": [
+								{
+									"key": "start",
+									"value": "2023-01-01 00:00"
+								},
+								{
+									"key": "end",
+									"value": "2024-10-30 00:00"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete ride by id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/rides/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"rides",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update ride status",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "CANCELLED",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/rides/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"rides",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new ride",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"driverId\": 1,\r\n  \"passengerId\": 1,\r\n  \"departureAddress\": \"Independency 1\",\r\n  \"arrivalAddress\": \"Independency 1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/rides",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"rides"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update ride by id",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"driverId\": 1,\r\n  \"passengerId\": 1,\r\n  \"departureAddress\": \"Independency 1\",\r\n  \"arrivalAddress\": \"Independency 2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/rides/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"rides",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "rating-service",
+			"item": [
+				{
+					"name": "Get rating by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/ratings/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"ratings",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all ratings by role and user id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/ratings/user/PASSENGER/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"ratings",
+								"user",
+								"PASSENGER",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all ratings by role",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/ratings/role/DRIVER",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"ratings",
+								"role",
+								"DRIVER"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get rating by role and ride id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/ratings/ride/DRIVER/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"ratings",
+								"ride",
+								"DRIVER",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Calculate avg rating for user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/ratings/avg-rating/DRIVER/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"ratings",
+								"avg-rating",
+								"DRIVER",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete rating by id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/ratings/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"ratings",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new rating",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"rideId\": 1,\r\n  \"userId\": 1,\r\n  \"rating\": 10,\r\n  \"comment\": \"INSANE\",\r\n  \"userRole\": \"DRIVER\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/ratings",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"ratings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update raiting by id",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"rating\": 1,\r\n  \"comment\": \"bad\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/ratings/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"ratings",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all ratings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/ratings",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"ratings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth-service",
+			"item": [
+				{
+					"name": "sign-in",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const myResponse = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set('refresh_token', myResponse.refresh_token);\r",
+									"pm.collectionVariables.set('access_token', myResponse.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"admin@admin.com\",\r\n    \"password\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/sign-in",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sign-up",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"driver\",\r\n    \"email\": \"driver@example.com\",\r\n    \"phoneNumber\": \"+375(29)1111111\",\r\n    \"gender\": \"MALE\",\r\n    \"role\": \"DRIVER\",\r\n    \"password\": \"driver\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/sign-up",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refresh-token",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const myResponse = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set('refresh_token', myResponse.refresh_token);\r",
+									"pm.collectionVariables.set('access_token', myResponse.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\": \"{{refresh_token}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/refresh-token",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"refresh-token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "http://localhost:8888/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "refresh_token",
+			"value": ""
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		}
+	]
+}

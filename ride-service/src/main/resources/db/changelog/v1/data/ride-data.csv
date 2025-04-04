@@ -1,0 +1,6 @@
+driver_id,passenger_id,departure_address,arrival_address,status,order_date_time,cost
+1,3,Independency 173,Yakuba Kolasa 53,COMPLETED,2024-10-07 15:45:30,34.00
+3,2,Soviet 17,Aivazovskogo 53,WAY_TO_PASSENGER,2024-10-04 11:24:23,10.75
+2,1,Ostroshitskaya 113,Independency 159,CANCELLED,2024-10-02 23:52:11,52.52
+4,6,Lenina 41,Krupskaya 32,WAY_TO_DESTINATION,2024-10-01 04:33:30,60.10
+5,3,Zaslonova 16,Pobedy 44,ACCEPTED,2024-10-07 21:32:14,19.95

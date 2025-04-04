@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="v1-car-table" author="kirill.lustoff@gmail.com">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="car"/>
+            </not>
+        </preConditions>
+        <createTable tableName="car">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="color" type="varchar" >
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="model" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="car_number" type="varchar">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="driver_id" type="int">
+                <constraints foreignKeyName="fk_car_drivers" references="driver(id)" nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="car"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

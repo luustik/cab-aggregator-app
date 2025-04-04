@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: auth-service
+
+  config:
+    import: 'configserver:'
+    activate:
+      on-profile: default
+
+  cloud:
+    discovery:
+      enabled: true
+
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+      fail-fast: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
