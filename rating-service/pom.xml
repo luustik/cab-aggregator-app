@@ -225,6 +225,10 @@
             <artifactId>logstash-logback-encoder</artifactId>
             <version>${logback.encoder.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-micrometer</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

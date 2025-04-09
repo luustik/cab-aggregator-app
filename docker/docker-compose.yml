@@ -90,6 +90,7 @@ services:
       - KC_REALM=${KC_REALM}
       - EUREKA_URL=${EUREKA_URL}
       - LOGSTASH_URL=${LOGSTASH_URL}
+      - ZIPKIN=${ZIPKIN}
     depends_on:
       driver-service:
         condition: service_healthy
