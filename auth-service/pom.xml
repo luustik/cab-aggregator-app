@@ -33,6 +33,7 @@
         <keycloak.version>26.0.0</keycloak.version>
         <exception.handler.version>1.0-SNAPSHOT</exception.handler.version>
         <logging.version>1.0-SNAPSHOT</logging.version>
+        <logback.encoder.version>8.0</logback.encoder.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -116,6 +117,11 @@
             <groupId>cab.aggregator.app</groupId>
             <artifactId>logging-starter</artifactId>
             <version>${logging.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logback.encoder.version}</version>
         </dependency>
     </dependencies>
 

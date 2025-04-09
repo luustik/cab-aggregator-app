@@ -89,6 +89,7 @@ services:
       - CLIENT_ID_FOR_AUTH_KC=${CLIENT_ID_FOR_AUTH_KC}
       - KC_REALM=${KC_REALM}
       - EUREKA_URL=${EUREKA_URL}
+      - LOGSTASH_URL=${LOGSTASH_URL}
     depends_on:
       driver-service:
         condition: service_healthy
@@ -131,6 +132,7 @@ services:
       - KC_REALM=${KC_REALM}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_URL=${REDIS_URL}
+      - LOGSTASH_URL=${LOGSTASH_URL}
     depends_on:
       config-server:
         condition: service_healthy
@@ -167,6 +169,7 @@ services:
       - JWT_ISSUER_URL=${JWT_ISSUER_URL}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_URL=${REDIS_URL}
+      - LOGSTASH_URL=${LOGSTASH_URL}
     depends_on:
       config-server:
         condition: service_healthy
@@ -199,6 +202,7 @@ services:
       - JWT_ISSUER_URL=${JWT_ISSUER_URL}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_URL=${REDIS_URL}
+      - LOGSTASH_URL=${LOGSTASH_URL}
     depends_on:
       config-server:
         condition: service_healthy
@@ -230,6 +234,7 @@ services:
       - JWT_ISSUER_URL=${JWT_ISSUER_URL}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_URL=${REDIS_URL}
+      - LOGSTASH_URL=${LOGSTASH_URL}
     depends_on:
       config-server:
         condition: service_healthy
@@ -255,6 +260,7 @@ services:
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_URL}
       - ZIPKIN=${ZIPKIN}
+      - LOGSTASH_URL=${LOGSTASH_URL}
     depends_on:
       driver-service:
         condition: service_healthy
@@ -469,7 +475,6 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
-      - xpack.monitoring.enabled=false
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
     healthcheck:
@@ -486,35 +491,16 @@ services:
     container_name: logstash
     ports:
       - "5044:5044"
+      - "5000:5000"
+      - "9600:9600"
     volumes:
+      - ./monitoring/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
       - ./monitoring/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     depends_on:
       elasticsearch:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9600/_node/stats" ]
-      interval: 5s
-      retries: 5
-      timeout: 15s
-      start_period: 30s
-    networks:
-      - cab-aggregator-app
-
-  filebeat:
-    image: elastic/filebeat:7.14.0
-    container_name: filebeat
-    command: ["filebeat", "-e", "--strict.perms=false"]
-    user: root
-    volumes:
-      - ./monitoring/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/log:/var/log:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    depends_on:
-      logstash:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "pgrep filebeat || exit 1"]
       interval: 5s
       retries: 5
       timeout: 15s
@@ -530,7 +516,7 @@ services:
     environment:
       ELASTICSEARCH_URL: ${ELASTICSEARCH_URL}
     depends_on:
-      filebeat:
+      logstash:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5601/status"]
