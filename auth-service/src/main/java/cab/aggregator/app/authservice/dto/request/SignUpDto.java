@@ -44,6 +44,7 @@ public record SignUpDto(
         @Pattern(regexp = ROLE_PATTERN, message = "{role.pattern}")
         String role,
 
+        @Schema(description = "Password", example = "qwerty123")
         @NotBlank(message = "{password.empty}")
         @Length(max = 255, message = "{password.length}", groups = {OnCreate.class, OnUpdate.class})
         String password

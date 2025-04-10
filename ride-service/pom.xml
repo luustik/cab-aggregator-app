@@ -37,6 +37,7 @@
         <cucumber.version>7.11.0</cucumber.version>
         <exception.handler.version>1.0-SNAPSHOT</exception.handler.version>
         <logging.version>1.0-SNAPSHOT</logging.version>
+        <logback.encoder.version>8.0</logback.encoder.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -209,6 +210,15 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logback.encoder.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-micrometer</artifactId>
         </dependency>
     </dependencies>
 

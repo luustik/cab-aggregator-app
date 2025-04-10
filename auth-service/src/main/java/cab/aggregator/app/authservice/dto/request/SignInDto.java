@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.Length;
 
 import static cab.aggregator.app.authservice.util.RegExp.EMAIL_PATTERN;
 
+@Schema(description = "SignUp DTO")
 public record SignInDto(
         @Schema(description = "User email", example = "nvienjnb@knsb.com")
         @NotNull(message = "{email.notnull}", groups = {OnCreate.class, OnUpdate.class})
@@ -17,6 +18,7 @@ public record SignInDto(
         @Pattern(regexp = EMAIL_PATTERN, message = "{email.pattern}")
         String email,
 
+        @Schema(description = "Password", example = "qwerty123")
         @NotBlank(message = "{password.empty}")
         @Length(max = 255, message = "{email.length}", groups = {OnCreate.class, OnUpdate.class})
         String password
