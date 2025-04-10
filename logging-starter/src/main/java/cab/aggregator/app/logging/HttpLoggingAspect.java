@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -91,14 +90,7 @@ public class HttpLoggingAspect {
         if (log.isInfoEnabled()) {
             log.info(RESPONSE_MESSAGE,
                     executionTime,
-                    getResponseBody(response));
+                    response);
         }
-    }
-
-    private Object getResponseBody(Object response) {
-        if (response instanceof ResponseEntity) {
-            return ((ResponseEntity<?>) response).getBody();
-        }
-        return response;
     }
 }
