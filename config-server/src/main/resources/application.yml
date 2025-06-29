@@ -18,7 +18,6 @@ eureka:
       health.path: /actuator/health
       management.context-path: /actuator
 
-
 management:
   endpoints:
     web:
