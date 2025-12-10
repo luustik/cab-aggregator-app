@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>${LOGSTASH_URL}</destination>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <mdc />
+                <context />
+                <logLevel />
+                <loggerName />
+                <pattern>
+                    <pattern>
+                        <omitEmptyFields>true</omitEmptyFields>
+                        {
+                        "application": {
+                        "name": "%applicationName"
+                        },
+                        "trace": {
+                        "trace_id": "%mdc{traceId}",
+                        "span_id": "%mdc{spanId}"
+                        }
+                        }
+                    </pattern>
+                </pattern>
+                <threadName />
+                <message />
+                <logstashMarkers />
+                <stackTrace />
+            </providers>
+        </encoder>
+    </appender>
+    <root level="info">
+        <appender-ref ref="logstash" />
+    </root>
+    <logger name="org.example" level="DEBUG" additivity="false">
+        <appender-ref ref="logstash"/>
+    </logger>
+</configuration>

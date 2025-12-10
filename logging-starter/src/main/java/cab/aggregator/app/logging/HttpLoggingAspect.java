@@ -1,16 +1,15 @@
 package cab.aggregator.app.logging;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
@@ -21,18 +20,16 @@ public class HttpLoggingAspect {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String RESPONSE_MESSAGE = """
-                    Response for {} {}:
-                    Status = {}
+                    Response:
                     Execution Time = {} ms
                     Body = {}""";
     private static final String REQUEST_MESSAGE = """
                     Request:
-                    Method = {}
-                    URL = {}
+                    Method = {} {}
                     Headers = {}
                     Parameters = {}""";
     private static final String ERROR_MESSAGE = """
-                Error processing {} {}:
+                Error processing:
                 Error Message = {}""";
 
     @Around("within(@org.springframework.web.bind.annotation.RestController *)")
@@ -47,12 +44,12 @@ public class HttpLoggingAspect {
         try {
             response = joinPoint.proceed();
         } catch (Exception e) {
-            logError(request, e);
+            log.error(ERROR_MESSAGE, e.getMessage());
             throw e;
         }
         long executionTime = System.currentTimeMillis() - startTime;
 
-        logResponse(request, response, executionTime, attributes.getResponse());
+        logResponse(response, executionTime);
         return response;
     }
 
@@ -60,49 +57,40 @@ public class HttpLoggingAspect {
         if (log.isInfoEnabled()) {
             log.info(REQUEST_MESSAGE,
                     request.getMethod(),
-                    request.getRequestURL(),
-                    getFilteredHeaders(request),
-                    request.getParameterMap());
+                    request.getRequestURI(),
+                    getHeadersInfo(request),
+                    getParametersInfo(request));
         }
     }
 
-    private void logResponse(HttpServletRequest request, Object response, long executionTime, HttpServletResponse servletResponse) {
+    private String getHeadersInfo(HttpServletRequest request) {
+        String headers = Collections.list(request.getHeaderNames())
+                .stream()
+                .map(header -> {
+                    if (AUTHORIZATION_HEADER.equalsIgnoreCase(header)) {
+                        return header + ": [MASKED]";
+                    }
+                    return header + ": " + request.getHeader(header);
+                })
+                .collect(Collectors.joining("; "));
+
+        return headers.isEmpty() ? "No Headers" : headers;
+    }
+
+    private String getParametersInfo(HttpServletRequest request) {
+        String params = request.getParameterMap().entrySet()
+                .stream()
+                .map(entry -> entry.getKey() + "=" + Arrays.toString(entry.getValue()))
+                .collect(Collectors.joining("; "));
+
+        return params.isEmpty() ? "No Parameters" : params;
+    }
+
+    private void logResponse(Object response, long executionTime) {
         if (log.isInfoEnabled()) {
             log.info(RESPONSE_MESSAGE,
-                    request.getMethod(),
-                    request.getRequestURI(),
-                    getStatus(response, servletResponse),
                     executionTime,
-                    getResponseBody(response));
+                    response);
         }
-    }
-
-    private void logError(HttpServletRequest request, Exception e) {
-        log.error(ERROR_MESSAGE,
-                request.getMethod(),
-                request.getRequestURI(),
-                e.getMessage());
-    }
-
-    private String getFilteredHeaders(HttpServletRequest request) {
-        return Collections.list(request.getHeaderNames())
-                .stream()
-                .filter(header -> !header.equalsIgnoreCase(AUTHORIZATION_HEADER))
-                .map(header -> header + "=" + request.getHeader(header))
-                .collect(Collectors.joining(", "));
-    }
-
-    private int getStatus(Object response, HttpServletResponse servletResponse) {
-        if (response instanceof ResponseEntity) {
-            return ((ResponseEntity<?>) response).getStatusCode().value();
-        }
-        return servletResponse.getStatus();
-    }
-
-    private Object getResponseBody(Object response) {
-        if (response instanceof ResponseEntity) {
-            return ((ResponseEntity<?>) response).getBody();
-        }
-        return response;
     }
 }
