@@ -5,7 +5,6 @@ volumes:
   pg_ride:
   pg_keycloak:
   kafka_data:
-  zookeeper_data:
   elastic_data:
 
 services:
@@ -275,44 +274,26 @@ services:
       retries: 10
       start_period: 90s
 
-  zookeeper:
-    image: wurstmeister/zookeeper
-    container_name: zookeeper
-    ports:
-      - "2181:2181"
-    volumes:
-      - zookeeper_data:/wurstmeister/zookeeper
-    networks:
-      - cab-aggregator-app
-    depends_on:
-      kibana:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "echo", "ruok", "|", "nc", "localhost", "2181", "|", "grep", "imok"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-
   kafka:
-    image: wurstmeister/kafka
+    image: apache/kafka:4.1.1
     container_name: kafka
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:29092,OUTSIDE://localhost:9092
-      KAFKA_LISTENERS: INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
-    depends_on:
-      zookeeper:
-        condition: service_healthy
     ports:
       - "29092:29092"
       - "9092:9092"
     volumes:
-      - kafka_data:/wurstmeister/kafka
+      - kafka_data:/var/lib/kafka/data
     networks:
       - cab-aggregator-app
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: CONTROLLER://0.0.0.0:29093,INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:29092,OUTSIDE://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     healthcheck:
       test: [ "CMD-SHELL", "nc -z kafka 29092" ]
       interval: 5s
@@ -433,7 +414,7 @@ services:
       start_period: 5s
 
   keycloak:
-    image: quay.io/keycloak/keycloak:22.0.1
+    image: keycloak/keycloak:22.0.1
     container_name: keycloak
     command: [ "start-dev", "--http-port=7000", "--import-realm", "--health-enabled=true" ]
     environment:
