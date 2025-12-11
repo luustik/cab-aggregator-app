@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 
+@Schema(description = "PasswordRequest DTO")
 public record PasswordRequest(
         @Schema(description = "Driver password", example = "qwerty123")
         @NotBlank(message = "{password.notblank}", groups = {OnCreate.class, OnUpdate.class})
